@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dns-benchmark-pro"
+version = "1.0.0"
+description = "Advanced DNS Benchmark Tool"
+requires-python = ">=3.8"
+dependencies = [
+    "requests",
+    "matplotlib"
+]
+
+[project.scripts]
+dns-benchmark = "dns_benchmark.cli:run_cli"
