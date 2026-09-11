@@ -1,3 +1,18 @@
+# DNS Benchmark Pro
+
+[![Stars](https://img.shields.io/github/stars/Alvandcode/dns-benchmark-pro?style=flat-square)](https://github.com/Alvandcode/dns-benchmark-pro/stargazers) [![License](https://img.shields.io/github/license/Alvandcode/dns-benchmark-pro?style=flat-square)](./LICENSE) [![Last commit](https://img.shields.io/github/last-commit/Alvandcode/dns-benchmark-pro?style=flat-square)](https://github.com/Alvandcode/dns-benchmark-pro/commits)
+
+> Advanced DNS benchmark (UDP, DoH, DoT) with scoring, latency stats and HTML/JSON/CSV reports.
+
+<div dir="rtl">
+
+## ابزار تست و مقایسه DNS
+
+ابزار پیشرفته برای تست و مقایسه سرعت سرورهای DNS با پشتیبانی از UDP و DoH و DoT؛ همراه با امتیازدهی، آمار تأخیر و گزارش HTML و JSON و CSV.
+
+</div>
+
+---
 
 # 🚀 DNS Benchmark Pro
 
@@ -133,3 +148,19 @@ MIT License
 👨‍💻 توسعه‌دهنده
 
 این پروژه برای تحلیل و تست عملکرد DNS سرورها توسعه داده شده است.
+
+---
+
+## Contributing / مشارکت
+
+- EN: Issues and Pull Requests are welcome. Please see `CONTRIBUTING.md`.
+- FA: برای گزارش مشکل یا پیشنهاد قابلیت جدید، لطفا ایشو یا پول‌ریکوئست ثبت کنید.
+
+## License / لایسنس
+
+MIT — see [LICENSE](./LICENSE).
+
+## Contact / ارتباط
+
+- Telegram: https://t.me/a_c_official
+- Website: https://alvandcode.github.io
