@@ -196,7 +196,7 @@ results/compare_runs.json
 results/report.html
 ```
 
-Reports land in `results/` (overwritten each run, git-ignored): `result.csv` (Excel-friendly `utf-8-sig`), `result.json`, `report.html` (full table + avg-vs-P95 chart), `chart.png`, `compare_runs.json` (multi-run mode), `history.db` + `trend.png` (monitoring mode).
+Reports land in `results/` (overwritten each run, git-ignored): `result.csv` (Excel-friendly `utf-8-sig`), `result.json`, `report.html` (full table + avg-vs-P95 chart), `chart.png`, `compare_runs.json` (multi-run mode; in `--watch` mode per-tick history goes to SQLite instead), `history.db` + `trend.png` (monitoring mode).
 
 ---
 
@@ -234,6 +234,7 @@ Grades: `A+ ≥95 · A ≥90 · B ≥80 · C ≥65 · D ≥40 · F <40`.
 ```text
 dns_benchmark/
 ├── cli.py            # flags, runs, watch/history/trend wiring
+├── __main__.py       # `python -m dns_benchmark` entry
 ├── async_engine.py   # concurrent engine (UDP/DoH/DoT)
 ├── dns_client.py     # UDP + TCP fallback
 ├── doh_client.py     # DNS-over-HTTPS
@@ -252,7 +253,7 @@ dns_benchmark/
 ├── qtypes.py         # A/AAAA normalisation
 └── query_generator.py# real-domain pool (+IR sites), seedable
 presets/ir.json
-tests/               # 64 tests (pytest -q)
+tests/               # 70 tests (pytest -q)
 .github/workflows/ci.yml
 ```
 
