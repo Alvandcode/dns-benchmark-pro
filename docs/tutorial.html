@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>آموزش DNS Benchmark Pro | گوشی و کامپیوتر</title>
+<meta name="description" content="آموزش قدم‌به‌قدم استفاده از DNS Benchmark Pro در گوشی (اندروید/آیفون) و ویندوز، لینوکس و مک"/>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css"/>
+<style>
+:root{
+  --bg:#0b1020; --bg2:#111936; --card:#ffffff; --ink:#1a2340; --muted:#5b6584;
+  --brand:#7c3aed; --brand2:#06b6d4; --ok:#16a34a; --warn:#d97706; --radius:18px;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Vazirmatn,Tahoma,"Segoe UI",sans-serif;background:linear-gradient(180deg,#0b1020,#131b3d 60%,#0b1020);color:#eef1ff;line-height:1.9}
+.wrap{max-width:960px;margin:0 auto;padding:0 18px 80px}
+.hero{text-align:center;padding:64px 18px 30px}
+.badge{display:inline-block;background:rgba(124,58,237,.18);border:1px solid rgba(124,58,237,.5);color:#d9ccff;padding:6px 18px;border-radius:999px;font-size:.85rem;margin-bottom:18px}
+.hero h1{font-size:clamp(1.7rem,5vw,2.8rem);margin:.2em 0;background:linear-gradient(90deg,#c4b5fd,#67e8f9);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:900}
+.hero p{color:#b9c1e4;max-width:640px;margin:0 auto}
+.tabs{display:flex;gap:12px;justify-content:center;margin:34px 0 8px;flex-wrap:wrap;position:sticky;top:0;z-index:5;padding:12px 0;background:linear-gradient(180deg,rgba(11,16,32,.96),rgba(11,16,32,.75));backdrop-filter:blur(6px)}
+.tab{border:2px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-family:inherit;font-size:1.05rem;font-weight:700;padding:14px 34px;border-radius:999px;cursor:pointer;transition:.25s}
+.tab small{display:block;font-size:.75rem;font-weight:400;color:#c6cdf2}
+.tab.active{background:linear-gradient(90deg,var(--brand),var(--brand2));border-color:transparent;box-shadow:0 8px 30px rgba(124,58,237,.45);transform:translateY(-2px)}
+.panel{display:none;animation:fade .35s ease}
+.panel.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.card{background:var(--card);color:var(--ink);border-radius:var(--radius);padding:26px 24px;margin:20px 0;box-shadow:0 18px 50px rgba(0,0,0,.35)}
+.card h2{margin:0 0 6px;font-size:1.3rem}
+.card h2 .step{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-size:1.1rem;margin-left:10px}
+.card p{margin:.5em 0;color:#334}
+.note{background:#f0f9ff;border-right:5px solid var(--brand2);border-radius:12px;padding:12px 16px;margin:14px 0;font-size:.95rem;color:#334}
+.warn{background:#fffbeb;border-right:5px solid var(--warn);border-radius:12px;padding:12px 16px;margin:14px 0;font-size:.95rem;color:#574006}
+.good{background:#f0fdf4;border-right:5px solid var(--ok);border-radius:12px;padding:12px 16px;margin:14px 0;font-size:.95rem;color:#14532d}
+.code{position:relative;background:#0f1530;color:#d7f9ff;border-radius:14px;padding:16px 16px 16px 60px;margin:14px 0;overflow-x:auto;direction:ltr;text-align:left}
+.code pre{margin:0;font-family:Consolas,Menlo,monospace;font-size:.88rem;line-height:1.8;white-space:pre-wrap}
+.copy{position:absolute;top:10px;left:10px;border:none;background:linear-gradient(90deg,var(--brand),var(--brand2));color:#fff;font-family:inherit;font-size:.75rem;padding:6px 14px;border-radius:8px;cursor:pointer}
+.copy.ok{background:var(--ok)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:14px 0}
+.mini{background:#f6f4ff;border:1px solid #e2d9ff;border-radius:14px;padding:16px}
+.mini b{display:block;margin-bottom:4px}
+.mini span{color:var(--muted);font-size:.9rem}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.92rem}
+th,td{border:1px solid #e3e6f5;padding:8px 10px;text-align:center}
+th{background:#eef0ff}
+.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:40px 0 10px}
+.btn{display:inline-block;text-decoration:none;font-weight:800;padding:14px 30px;border-radius:999px;transition:.25s}
+.btn.star{background:linear-gradient(90deg,#f59e0b,#ef4444);color:#fff;box-shadow:0 10px 28px rgba(239,68,68,.4)}
+.btn.tg{background:linear-gradient(90deg,#0ea5e9,#22d3ee);color:#fff;box-shadow:0 10px 28px rgba(14,165,233,.4)}
+.btn.gh{background:#fff;color:#111936}
+.btn:hover{transform:translateY(-3px)}
+footer{text-align:center;color:#8b93b8;font-size:.85rem;padding:30px 0 10px}
+footer a{color:#a5b4fc}
+#top{position:fixed;bottom:20px;left:20px;width:48px;height:48px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-size:1.3rem;cursor:pointer;display:none;box-shadow:0 10px 25px rgba(0,0,0,.4)}
+@media(max-width:560px){.card{padding:20px 16px}.tab{padding:12px 22px;font-size:.95rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="hero">
+    <div class="badge">DNS Benchmark Pro • نسخه 1.4.0</div>
+    <h1>🎓 آموزش قدم‌به‌قدم: سریع‌ترین DNS را خودت پیدا کن</h1>
+    <p>بدون حدس و شنیده‌ها — با عدد و نمودار. یکی از دو مسیر زیر را انتخاب کن:</p>
+  </div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab active" onclick="show('phone',this)">📱 با گوشی<small>اندروید و آیفون • بدون روت</small></button>
+    <button class="tab" onclick="show('desktop',this)">🖥️ با کامپیوتر<small>ویندوز • لینوکس • مک</small></button>
+  </div>
+
+  <!-- ================= PHONE ================= -->
+  <div class="panel active" id="phone">
+    <div class="card">
+      <h2><span class="step">۱</span> نصب ترموکس (فقط اندروید)</h2>
+      <p>از <b>F-Droid</b> برنامه <b>Termux</b> را نصب کن (نسخه گوگل‌پلی قدیمی است). بعد این دستورها را یکی‌یکی بزن:</p>
+      <div class="code"><button class="copy" onclick="copy(this)">کپی</button><pre>pkg update && pkg install python git -y
+git clone https://github.com/Alvandcode/dns-benchmark-pro
+cd dns-benchmark-pro
+pip install requests matplotlib</pre></div>
+      <div class="note">اگر نصب <b>matplotlib</b> طول کشید یا خطا داد اشکالی ندارد — ابزار بدون آن هم کامل کار می‌کند، فقط نمودار ساخته نمی‌شود.</div>
+    </div>
+
+    <div class="card">
+      <h2><span class="step">۲</span> اولین تست ۳۰ ثانیه‌ای</h2>
+      <div class="code"><button class="copy" onclick="copy(this)">کپی</button><pre>python main.py --queries 5 --seed 42</pre></div>
+      <p>اگر جدول امتیازها را دیدی، یعنی همه‌چیز درست نصب شده. 🎉</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="step">۳</span> تست مخصوص ایران 🇮🇷</h2>
+      <div class="code"><button class="copy" onclick="copy(this)">کپی</button><pre>python main.py --preset ir --queries 10 --seed 42</pre></div>
+      <p>به ستون <b>hijack</b> دقت کن:</p>
+      <div class="grid">
+        <div class="mini"><b>✅ clean</b><span>مسیر سالم است، به عددها اعتماد کن</span></div>
+        <div class="mini"><b>🚨 HIJACKED</b><span>اینترنتت UDP را دستکاری می‌کند! دستور زیر را بزن:</span></div>
+      </div>
+      <div class="code"><button class="copy" onclick="copy(this)">کپی</button><pre>python main.py --preset ir --queries 10 --protocol doh --seed 42</pre></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="step">۴</span> اعمال نتیجه روی گوشی</h2>
+      <p>هر کدام <b>امتیاز بالاتر</b> و <b>± کوچک‌تر</b> داشت، همان DNS توست. آن را در تنظیمات وای‌فای گوشی (گزینه DNS خصوصی / Private DNS) وارد کن و تمام!</p>
+      <div class="warn">⚠️ <b>کاربران آیفون:</b> روی iOS ترموکس وجود ندارد. با برنامه a-Shell فقط حالت DoH جواب می‌دهد (<b>--protocol doh</b>). اگر نشد، با کامپیوتر تست بگیر و فقط نتیجه را روی گوشی اعمال کن.</div>
+    </div>
+  </div>
+
+  <!-- ================= DESKTOP ================= -->
+  <div class="panel" id="desktop">
+    <div class="card">
+      <h2><span class="step">۱</span> نصب پایتون (فقط بار اول)</h2>
+      <div class="grid">
+        <div class="mini"><b>🪟 ویندوز</b><span>از python.org نسخه 3.9+ — تیک Add to PATH یادت نره</span></div>
+        <div class="mini"><b>🐧 لینوکس</b><span><span dir="ltr">sudo apt install python3 python3-pip git -y</span></span></div>
+        <div class="mini"><b>🍎 مک</b><span><span dir="ltr">brew install python git</span> یا نصب از python.org</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="step">۲</span> دانلود و نصب ابزار</h2>
+      <div class="code"><button class="copy" onclick="copy(this)">کپی</button><pre>git clone https://github.com/Alvandcode/dns-benchmark-pro
+cd dns-benchmark-pro
+pip install -r requirements.txt</pre></div>
+      <div class="note">لینوکس/مک: اگر <span dir="ltr">pip</span> پیدا نشد از <span dir="ltr">pip3</span> استفاده کن. ویندوز: اگر <span dir="ltr">python</span> کار نکرد، <span dir="ltr">py</span> را امتحان کن.</div>
+    </div>
+
+    <div class="card">
+      <h2><span class="step">۳</span> اجرا — از ساده تا حرفه‌ای</h2>
+      <div class="code"><button class="copy" onclick="copy(this)">کپی</button><pre># تست سریع
+python main.py --queries 5
+
+# تست کامل مخصوص ایران
+python main.py --preset ir --queries 20 --seed 42
+
+# مقایسه مطمئن: 3 بار تکرار با فاصله اطمینان
+python main.py --preset ir --queries 20 --runs 3 --seed 42
+
+# مانیتورینگ: هر 5 دقیقه یک تست (بهترین DNS در طول روز)
+python main.py --preset ir --queries 10 --watch 300 --seed 42
+python main.py --trend</pre></div>
+    </div>
+
+    <div class="card">
+      <h2><span class="step">۴</span> خواندن نتیجه</h2>
+      <p>فایل‌ها در پوشه <b>results</b> ساخته می‌شوند — <b>report.html</b> را در مرورگر باز کن (جدول + نمودار):</p>
+      <table>
+        <tr><th>به چه چیزی نگاه کنم؟</th><th>یعنی چه؟</th></tr>
+        <tr><td><b>score</b> بالاتر</td><td>DNS بهتر (۰ تا ۱۰۰)</td></tr>
+        <tr><td><b>±</b> کوچک‌تر</td><td>پایدارتر (مثلاً ‎±0.11 عالی، ‎±10 ناپایدار‎)</td></tr>
+        <tr><td><b>hijack = HIJACKED</b></td><td>نتیجه UDP را قبول نکن، با DoH دوباره تست بگیر</td></tr>
+        <tr><td><b>loss بالای ۵٪</b></td><td>قطع‌ووصلی دارد — برای گیم و تماس بد است</td></tr>
+      </table>
+      <div class="warn">⚠️ <b>نکته ویندوز:</b> اگر همه <span dir="ltr">TIMEOUT</span> شدند، فایروال یا آنتی‌ویروس پورت UDP/53 را بسته — اول با <span dir="ltr">--protocol doh</span> امتحان کن.</div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <a class="btn star" href="https://github.com/Alvandcode/dns-benchmark-pro" target="_blank" rel="noopener">⭐ ستاره به پروژه</a>
+    <a class="btn tg" href="https://t.me/a_c_official" target="_blank" rel="noopener">📢 کانال تلگرام</a>
+    <a class="btn gh" href="https://github.com/Alvandcode/dns-benchmark-pro" target="_blank" rel="noopener">💻 صفحه گیت‌هاب</a>
+  </div>
+
+  <footer>ساخته‌شده با ❤️ برای همه کسانی که DNSشان را شانسی انتخاب نمی‌کنند<br/><a href="https://github.com/Alvandcode/dns-benchmark-pro">DNS Benchmark Pro</a> • MIT License</footer>
+</div>
+
+<button id="top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="بازگشت به بالا">↑</button>
+
+<script>
+function show(id, btn){
+  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if(history.replaceState){ history.replaceState(null,'','#'+id); }
+}
+function copy(btn){
+  var txt = btn.parentElement.querySelector('pre').innerText;
+  function done(){ btn.textContent='✓ کپی شد'; btn.classList.add('ok'); setTimeout(function(){ btn.textContent='کپی'; btn.classList.remove('ok'); },1600); }
+  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done, done); }
+  else { var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); done(); }
+}
+(function(){
+  var h = location.hash.replace('#','');
+  if(h==='desktop'){ var tabs=document.querySelectorAll('.tab'); if(tabs[1]) show('desktop',tabs[1]); }
+  var top=document.getElementById('top');
+  window.addEventListener('scroll',function(){ top.style.display = window.scrollY>400 ? 'block':'none'; });
+})();
+</script>
+</body>
+</html>

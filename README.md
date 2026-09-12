@@ -18,10 +18,29 @@
 
 </div>
 
+<p align="center">
+  <a href="docs/tutorial.html"><b>🎓 آموزش قدم‌به‌قدم با گوشی و کامپیوتر — کلیک کنید</b></a>
+  <br/>
+  <sub>Step-by-step tutorial (phone & desktop) — click to open, or open <code>docs/tutorial.html</code> in your browser after cloning.</sub>
+</p>
+
+---
+
+## 🎓 Tutorial | آموزش تصویری
+
+**New here? Start with the visual step-by-step tutorial** (Persian, phone & desktop separated): **[📖 Open the tutorial](docs/tutorial.html)** — after cloning you can also just open `docs/tutorial.html` in any browser, no internet needed (except the font).
+
+<div dir="rtl" lang="fa">
+
+**تازه واردی؟ از آموزش تصویری شروع کن** (فارسی، تفکیک‌شده برای گوشی و کامپیوتر): **[📖 باز کردن صفحه آموزش](docs/tutorial.html)** — اگر روی گیت‌هاب سورس صفحه را دیدی، بعد از کلون کردن ریپو فایل `docs/tutorial.html` را در مرورگر باز کن.
+
+</div>
+
 ---
 
 ## 📑 Contents | فهرست
 
+- [🎓 Tutorial | آموزش تصویری](#-tutorial--آموزش-تصویری)
 - [✨ Features | قابلیت‌ها](#-features--قابلیتها)
 - [⚡ Quick Start | شروع سریع](#-quick-start--شروع-سریع)
 - [🇮🇷 Iran Preset | پریست ایران](#-iran-preset--پریست-ایران)
