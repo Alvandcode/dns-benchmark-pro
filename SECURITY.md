@@ -4,8 +4,8 @@
 
 | Version | Supported |
 |---|---|
-| latest `main` | âœ… |
-| older tags | âŒ (please upgrade) |
+| latest `main` | yes |
+| older tags | no (please upgrade) |
 
 ## Reporting a Vulnerability
 

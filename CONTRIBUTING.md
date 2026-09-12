@@ -16,7 +16,7 @@ Thanks for your interest! Issues and PRs are welcome.
 - Keep PRs small and focused.
 - Update README/docs if behavior changes.
 - Use English for code comments, issues and PRs.
-- Be respectful â€” see `CODE_OF_CONDUCT.md`.
+- Be respectful to other contributors.
 
 ## Reporting bugs
 
