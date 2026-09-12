@@ -1,6 +1,6 @@
 """dns-benchmark-pro package."""
 
-__version__ = "1.3.0"
+__version__ = "1.4.0"
 __all__ = [
     "cli",
     "async_engine",
@@ -13,6 +13,11 @@ __all__ = [
     "exporter",
     "dashboard",
     "advisor",
+    "hijack",
+    "compare",
+    "monitor",
+    "store",
+    "presets",
     "query_generator",
     "qtypes",
 ]

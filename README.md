@@ -92,6 +92,21 @@ python main.py --preset ir --queries 20 --runs 3 --run-delay 2 --seed 42
 - عدد خیلی خوب ولی مشکوک (مثلاً 0.6ms برای سرور خارجی) را با ستون `hijack` و یک ران `doh` راستی‌آزمایی کنید.
 - یک ران کافی نیست: حداقل `--runs 3 --queries 20` و در ساعت‌های مختلف تکرار کنید.
 
+## 📡 مانیتورینگ دوره‌ای (SQLite + نمودار روند)
+
+```bash
+# every 5 minutes, forever (Ctrl+C stops; history kept in results/history.db):
+python main.py --preset ir --queries 10 --watch 300 --seed 42
+# 6 ticks, 60s apart:
+python main.py --dns 1.1.1.1 8.8.8.8 --watch 60 --watch-count 6
+# inspect:
+python main.py --history 10
+python main.py --trend            # all servers + results/trend.png
+python main.py --trend 1.1.1.1    # one server
+```
+
+هر تیک در دیتابیس ذخیره می‌شود؛ با `--db path/to.db` مسیر را عوض کنید. برای اجرای خودکار (Task Scheduler/cron) از `--watch-count` استفاده کنید تا خودش تمام شود؛ کد خروج مثل حالت عادی است (0 موفق، 2 یعنی همه loss).
+
 نمایش همه گزینه‌ها:
 
 ```bash
@@ -171,6 +186,8 @@ dns_benchmark/
 ├── advisor.py
 ├── hijack.py
 ├── compare.py
+├── monitor.py
+├── store.py
 ├── presets.py
 ├── qtypes.py
 └── query_generator.py

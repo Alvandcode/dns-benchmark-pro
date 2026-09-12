@@ -9,10 +9,11 @@ import time
 
 from dns_benchmark.advisor import recommend
 from dns_benchmark.async_engine import AsyncDNSBenchmark
-from dns_benchmark.compare import aggregate
+from dns_benchmark.compare import aggregate, mean_ci
 from dns_benchmark.dashboard import generate_html_report
 from dns_benchmark.exporter import export_csv, export_json
 from dns_benchmark.hijack import check_server, summarize as hijack_summary
+from dns_benchmark import monitor, store
 from dns_benchmark.presets import list_presets, load_preset
 from dns_benchmark.qtypes import normalize_qtype
 from dns_benchmark.query_generator import set_custom_domains, set_seed
@@ -39,6 +40,16 @@ def build_parser() -> argparse.ArgumentParser:
                    help="repeat the whole benchmark N times and compare (default 1)")
     p.add_argument("--run-delay", type=float, default=2.0,
                    help="seconds between runs (default 2)")
+    p.add_argument("--watch", type=float, default=0.0,
+                   help="monitoring mode: repeat benchmark every N seconds (0=off)")
+    p.add_argument("--watch-count", type=int, default=0,
+                   help="ticks in watch mode, 0=infinite until Ctrl+C (default 0)")
+    p.add_argument("--db", default="results/history.db",
+                   help="SQLite history db for watch/history/trend")
+    p.add_argument("--history", nargs="?", const=10, type=int, default=None,
+                   help="show last N runs from history db and exit (default 10)")
+    p.add_argument("--trend", nargs="?", const="*", default=None,
+                   help="show score trend (optionally one server) + trend.png, then exit")
     p.add_argument("--timeout", type=float, default=3.0,
                    help="per-query timeout in seconds 0.1-30 (default 3)")
     p.add_argument("--protocol", choices=["udp", "doh", "dot"], default="udp",
@@ -116,6 +127,106 @@ def _one_run(args, qtype, run_idx: int):
     return final
 
 
+def _show_history(args, parser) -> None:
+    """Print last N runs from the SQLite db. Always exits (never benchmarks)."""
+    if args.history < 1:
+        parser.error("--history must be >= 1")
+    from pathlib import Path
+
+    dbp = Path(args.db)
+    if not dbp.is_file():
+        print(f"ERROR: no history db at {dbp} (run with --watch first)",
+              file=sys.stderr)
+        raise SystemExit(1)
+    conn = store.connect(args.db)
+    try:
+        store.init_db(conn)
+        hist = store.load_history(conn, limit_runs=args.history)
+    finally:
+        conn.close()
+    if not hist:
+        print("History is empty.")
+        raise SystemExit(0)
+    for h in hist:
+        m = h["run"]
+        print(f"run #{m['id']} {m['ts_utc']} {m['protocol']}/{m['qtype']} "
+              f"preset={m['preset'] or '-'}")
+        for r in h["results"]:
+            print(f"   {r['server']:>22} score={r['score']} grade={r['grade']} "
+                  f"avg={r['average']}ms loss={r['packet_loss']}% "
+                  f"hijack={r['hijack'] or '-'}")
+    raise SystemExit(0)
+
+
+def _show_trend(args, parser) -> None:
+    """Print per-server score trend + save trend.png. Always exits."""
+    from pathlib import Path
+
+    dbp = Path(args.db)
+    if not dbp.is_file():
+        print(f"ERROR: no history db at {dbp} (run with --watch first)",
+              file=sys.stderr)
+        raise SystemExit(1)
+    conn = store.connect(args.db)
+    try:
+        store.init_db(conn)
+        names = store.servers(conn)
+        if args.trend != "*":
+            if args.trend not in names:
+                print(f"ERROR: server {args.trend!r} not in history "
+                      f"(known: {', '.join(names) or 'none'})", file=sys.stderr)
+                raise SystemExit(1)
+            names = [args.trend]
+        series = {s: store.series(conn, s, limit_runs=30) for s in names}
+    finally:
+        conn.close()
+    if not series or all(not v for v in series.values()):
+        print("History is empty.")
+        raise SystemExit(0)
+    for server, points in sorted(series.items()):
+        scores = [float(p["score"]) for p in points]
+        mean, _, ci = mean_ci(scores)
+        print(f"{server:>22}  n={len(points):<3} last={scores[-1]:<6} "
+              f"mean={mean}±{ci} min={min(scores)} max={max(scores)}")
+    out = Path(args.output_dir) / "trend.png"
+    chart = monitor.generate_trend_chart(series, out)
+    print(chart if chart is not None else "Trend chart unavailable (matplotlib missing).")
+    raise SystemExit(0)
+
+
+def _benchmark_pass(args, qtype):
+    """One full pass: N runs (+aggregate) + hijack probe. Returns (final, all_runs)."""
+    all_runs = []
+    for i in range(args.runs):
+        if i > 0 and args.run_delay > 0:
+            time.sleep(args.run_delay)
+        all_runs.append(_one_run(args, qtype, i))
+
+    if args.runs > 1:
+        final = aggregate(all_runs)
+    else:
+        final = all_runs[0]
+
+    # Hijack probe (UDP only; one cheap query per server).
+    hijack_results = []
+    if args.hijack_check and args.protocol == "udp":
+        print("Hijack check (.invalid probe) ...", flush=True)
+        for r in final:
+            res = check_server(r["ip"], timeout=min(args.timeout, 5.0))
+            hijack_results.append(res)
+            r["hijack"] = res["verdict"]
+            if res["verdict"] == "hijacked":
+                r["hijack"] = f"HIJACKED ({', '.join(res['invalid_answers'])})"
+        print(hijack_summary(hijack_results))
+    elif args.hijack_check:
+        for r in final:
+            r["hijack"] = "n/a (non-udp)"
+    else:
+        for r in final:
+            r["hijack"] = ""
+    return final, all_runs
+
+
 def run_cli(argv=None):
     """Run the benchmark. Returns the sorted result list (empty on fatal error)."""
     parser = build_parser()
@@ -127,6 +238,12 @@ def run_cli(argv=None):
         for n in names:
             print(f"  - {n}")
         raise SystemExit(0)
+
+    from pathlib import Path as _Path
+    if args.history is not None:
+        _show_history(args, parser)
+    if args.trend is not None:
+        _show_trend(args, parser)
 
     preset = None
     if args.preset:
@@ -157,6 +274,10 @@ def run_cli(argv=None):
         parser.error("--runs must be >= 1")
     if not 0 <= args.run_delay <= 300:
         parser.error("--run-delay must be between 0 and 300")
+    if not 0 <= args.watch <= 86400:
+        parser.error("--watch must be between 0 (off) and 86400")
+    if args.watch_count < 0:
+        parser.error("--watch-count must be >= 0")
     if not 0.1 <= args.timeout <= 30:
         parser.error("--timeout must be between 0.1 and 30")
     if not args.dns:
@@ -176,11 +297,30 @@ def run_cli(argv=None):
           f"x {args.runs} run(s) via {args.protocol.upper()}/{args.qtype.upper()} ...",
           flush=True)
     try:
-        all_runs = []
-        for i in range(args.runs):
-            if i > 0 and args.run_delay > 0:
-                time.sleep(args.run_delay)
-            all_runs.append(_one_run(args, qtype, i))
+        if args.watch and args.watch > 0:
+            meta = {
+                "protocol": args.protocol,
+                "qtype": args.qtype.upper(),
+                "queries": args.queries,
+                "runs": args.runs,
+                "preset": args.preset or "",
+                "domain_group": args.domain_group,
+            }
+
+            def tick():
+                try:
+                    passed, _ = _benchmark_pass(args, qtype)
+                    return passed
+                except (RuntimeError, ValueError) as exc:
+                    print(f"ERROR in watch tick: {exc}", file=sys.stderr)
+                    return []
+
+            final = monitor.run_watch(args.db, meta, tick,
+                                      interval=args.watch,
+                                      count=args.watch_count)
+            all_runs = [final] if final else []
+        else:
+            final, all_runs = _benchmark_pass(args, qtype)
     except RuntimeError as exc:
         # e.g. running inside Jupyter with a live loop
         print(f"ERROR: asyncio: {exc}\nHint: use await engine.run_all(...) in notebooks.",
@@ -192,32 +332,9 @@ def run_cli(argv=None):
     finally:
         set_custom_domains(None)  # don't leak custom pool into later runs/tests
 
-    if args.runs > 1:
-        try:
-            final = aggregate(all_runs)
-        except ValueError as exc:
-            print(f"ERROR: {exc}", file=sys.stderr)
-            return []
-    else:
-        final = all_runs[0]
-
-    # Hijack probe (UDP only; one cheap query per server).
-    hijack_results = []
-    if args.hijack_check and args.protocol == "udp":
-        print("Hijack check (.invalid probe) ...", flush=True)
-        for r in final:
-            res = check_server(r["ip"], timeout=min(args.timeout, 5.0))
-            hijack_results.append(res)
-            r["hijack"] = res["verdict"]
-            if res["verdict"] == "hijacked":
-                r["hijack"] = f"HIJACKED ({', '.join(res['invalid_answers'])})"
-        print(hijack_summary(hijack_results))
-    elif args.hijack_check:
-        for r in final:
-            r["hijack"] = "n/a (non-udp)"
-    else:
-        for r in final:
-            r["hijack"] = ""
+    if not final:
+        print("ERROR: no results (all ticks failed)", file=sys.stderr)
+        return []
 
     if args.runs > 1:
         print(f"\nCOMPARISON ({args.runs} runs, 95% CI)")
@@ -248,7 +365,7 @@ def run_cli(argv=None):
     try:
         print(export_csv(final, out / "result.csv"))
         print(export_json(final, out / "result.json"))
-        if args.runs > 1:
+        if args.runs > 1 and not (args.watch and args.watch > 0):
             print(export_json(
                 [{"run": i + 1, "results": run} for i, run in enumerate(all_runs)],
                 out / "compare_runs.json"))
