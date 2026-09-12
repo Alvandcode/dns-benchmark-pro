@@ -21,6 +21,25 @@ def _family_for_ip(dns_ip: str):
     return socket.AF_INET6, str(addr)
 
 
+def resolve_target(dns_ip: str):
+    """Return (family, sockaddr) for a DNS server IP.
+
+    Link-local IPv6 literals carry a scope id (``fe80::1%eth0``) which a
+    plain 2-tuple cannot express; those fall back to getaddrinfo so the
+    full 4-tuple (host, port, flowinfo, scopeid) is used.
+    """
+    family, clean_ip = _family_for_ip(dns_ip)
+    if "%" in clean_ip:
+        try:
+            infos = socket.getaddrinfo(clean_ip, 53, family, socket.SOCK_DGRAM)
+        except OSError as exc:
+            raise ValueError(f"unresolvable scoped address {dns_ip!r}: {exc}") from exc
+        if not infos:
+            raise ValueError(f"unresolvable scoped address: {dns_ip!r}")
+        return infos[0][0], infos[0][4]
+    return family, (clean_ip, 53)
+
+
 def _is_truncated(resp: bytes) -> bool:
     if len(resp) < 4:
         return False
@@ -28,13 +47,13 @@ def _is_truncated(resp: bytes) -> bool:
     return bool((flags >> 9) & 1)
 
 
-def _query_tcp(family, clean_ip, packet, tid, qname_wire, timeout) -> tuple:
+def _query_tcp(family, sockaddr, packet, tid, qname_wire, timeout) -> tuple:
     """DNS-over-TCP fallback (length-prefixed). Returns (ok, latency|None, err)."""
     start = time.perf_counter()
     try:
         with socket.socket(family, socket.SOCK_STREAM) as sock:
             sock.settimeout(timeout)
-            sock.connect((clean_ip, 53))
+            sock.connect(sockaddr)
             sock.sendall(struct.pack("!H", len(packet)) + packet)
             hdr = _recvall(sock, 2)
             if len(hdr) != 2:
@@ -84,7 +103,7 @@ def dns_query(dns_ip, domain, timeout=3.0, qtype=1):
         return False, None, f"BAD_QUERY: {exc}"
 
     try:
-        family, clean_ip = _family_for_ip(dns_ip)
+        family, sockaddr = resolve_target(dns_ip)
     except ValueError as exc:
         return False, None, str(exc)
 
@@ -99,7 +118,7 @@ def dns_query(dns_ip, domain, timeout=3.0, qtype=1):
     try:
         with socket.socket(family, socket.SOCK_DGRAM) as sock:
             sock.settimeout(timeout)
-            sock.sendto(packet, (clean_ip, 53))
+            sock.sendto(packet, sockaddr)
             response, _ = sock.recvfrom(5120)
     except socket.timeout:
         return False, None, "TIMEOUT"
@@ -113,7 +132,7 @@ def dns_query(dns_ip, domain, timeout=3.0, qtype=1):
     # Truncated UDP -> retry over TCP (covers large/DNSSEC answers).
     if _is_truncated(response):
         ok, tcp_latency, err = _query_tcp(
-            family, clean_ip, packet, tid, qname_wire, timeout
+            family, sockaddr, packet, tid, qname_wire, timeout
         )
         if ok:
             return True, tcp_latency, None

@@ -42,6 +42,31 @@ def test_dot_bad_ip_fast_fail():
     assert ok is False
 
 
+def test_doh_dot_reject_bad_qtype_without_network():
+    """qtype validation must happen before any socket/HTTP traffic."""
+    from dns_benchmark.doh_client import doh_query
+
+    ok, lat, err = doh_query("1.1.1.1", "google.com", timeout=1, qtype="MX")
+    assert ok is False and "BAD_QUERY" in err
+    ok, lat, err = dot_query("1.1.1.1", "google.com", timeout=1, qtype=99)
+    assert ok is False and "BAD_QUERY" in err
+    ok, lat, err = doh_query("1.1.1.1", "", timeout=1)
+    assert ok is False and "BAD_QUERY" in err
+
+
+def test_scoped_ipv6_never_raises():
+    """Link-local scoped literals must fail gracefully, never raise."""
+    from dns_benchmark.dns_client import dns_query, resolve_target
+
+    ok, lat, err = dns_query("fe80::1%no-such-zone-xyz", "google.com", timeout=1)
+    assert ok is False and isinstance(err, str)
+    # plain IPs still resolve to simple 2-tuples
+    fam, sa = resolve_target("1.1.1.1")
+    assert sa == ("1.1.1.1", 53)
+    fam6, sa6 = resolve_target("::1")
+    assert sa6 == ("::1", 53)
+
+
 def test_tcp_fallback_on_truncation(monkeypatch):
     """Simulate TC=1 UDP response; client must retry via TCP (mocked ok)."""
     import dns_benchmark.dns_client as dc

@@ -119,14 +119,18 @@ def load_history(conn: sqlite3.Connection, limit_runs: int = 10,
 
 def series(conn: sqlite3.Connection, server: str,
            limit_runs: int = 30) -> list:
-    """Time-ordered (oldest first) score/avg series for one server."""
+    """Time-ordered (oldest first) score/avg series for one server.
+
+    Returns the LATEST `limit_runs` points (not the oldest) so the trend
+    chart never goes stale once history grows past the limit.
+    """
     rows = conn.execute(
         "SELECT r.ts_utc, s.score, s.average, s.p95, s.packet_loss"
         " FROM results s JOIN runs r ON r.id = s.run_id"
-        " WHERE s.server = ? ORDER BY r.id ASC LIMIT ?",
+        " WHERE s.server = ? ORDER BY r.id DESC LIMIT ?",
         (server, limit_runs),
     ).fetchall()
-    return [dict(r) for r in rows]
+    return [dict(r) for r in reversed(rows)]
 
 
 def servers(conn: sqlite3.Connection) -> list:

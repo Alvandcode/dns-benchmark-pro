@@ -14,8 +14,13 @@ from dns_benchmark.scoring import grade
 
 
 def mean_ci(values: list) -> tuple:
-    """Returns (mean, stdev, ci95_half_width), all rounded to 2 decimals."""
-    vals = [float(v) for v in values if isinstance(v, (int, float))]
+    """Returns (mean, stdev, ci95_half_width), all rounded to 2 decimals.
+
+    Non-finite inputs (inf/nan) are ignored so hostile or corrupt data
+    can never crash aggregation.
+    """
+    vals = [float(v) for v in values
+            if isinstance(v, (int, float)) and math.isfinite(float(v))]
     if not vals:
         return 0.0, 0.0, 0.0
     mean = statistics.mean(vals)
@@ -50,6 +55,7 @@ def aggregate(all_runs: list) -> list:
         score_mean, _, score_ci = mean_ci([r.get("score", 0) for r in rows])
         avg_mean, _, avg_ci = mean_ci([r.get("average", 0) for r in rows])
         p95_mean, _, _ = mean_ci([r.get("p95", 0) for r in rows])
+        med_mean, _, _ = mean_ci([r.get("median", 0) for r in rows])
         loss_mean, _, _ = mean_ci([r.get("packet_loss", 0) for r in rows])
         hijacks = {r.get("hijack", "") for r in rows if r.get("hijack")}
         first = order[ip]
@@ -61,7 +67,7 @@ def aggregate(all_runs: list) -> list:
             "runs": len(rows),
             "average": avg_mean,
             "avg_ci": avg_ci,
-            "median": first.get("median", 0),
+            "median": med_mean,
             "p95": p95_mean,
             "packet_loss": loss_mean,
             "succeeded": sum(int(r.get("succeeded", 0) or 0) for r in rows),

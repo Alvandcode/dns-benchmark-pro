@@ -239,7 +239,6 @@ def run_cli(argv=None):
             print(f"  - {n}")
         raise SystemExit(0)
 
-    from pathlib import Path as _Path
     if args.history is not None:
         _show_history(args, parser)
     if args.trend is not None:

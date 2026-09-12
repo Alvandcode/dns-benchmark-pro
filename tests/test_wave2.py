@@ -160,3 +160,41 @@ def test_cli_watch_flags_validation():
     with pytest.raises(SystemExit) as exc:
         run_cli(["--watch", "5", "--watch-count", "-1", "--dns", "1.1.1.1"])
     assert exc.value.code != 0
+
+
+def test_console_entry_is_main_with_exit_codes():
+    """pyproject console script must be cli:main (not run_cli) so exit codes work."""
+    import pathlib
+
+    text = pathlib.Path("pyproject.toml").read_text(encoding="utf-8")
+    assert 'dns-benchmark = "dns_benchmark.cli:main"' in text
+    from dns_benchmark.cli import main
+
+    with pytest.raises(SystemExit) as exc:
+        main(["--help"])
+    assert exc.value.code == 0
+
+
+def test_series_returns_latest_not_oldest(tmp_path):
+    conn = store.connect(tmp_path / "h.db")
+    store.init_db(conn)
+    meta = {"protocol": "udp", "qtype": "A", "queries": 1, "runs": 1}
+    for i in range(35):
+        store.save_run(conn, meta, [_row("1.1.1.1", float(i))])
+    pts = store.series(conn, "1.1.1.1", limit_runs=30)
+    assert len(pts) == 30
+    assert pts[0]["score"] == 5.0 and pts[-1]["score"] == 34.0
+    conn.close()
+
+
+def test_aggregate_median_is_mean(tmp_path=None):
+    from dns_benchmark.compare import aggregate
+
+    run1 = [{"ip": "a", "name": "a", "score": 90.0, "average": 20.0,
+             "median": 10.0, "p95": 25.0, "packet_loss": 0.0, "succeeded": 5,
+             "errors": {}}]
+    run2 = [{"ip": "a", "name": "a", "score": 90.0, "average": 20.0,
+             "median": 30.0, "p95": 25.0, "packet_loss": 0.0, "succeeded": 5,
+             "errors": {}}]
+    out = aggregate([run1, run2])
+    assert out[0]["median"] == 20.0

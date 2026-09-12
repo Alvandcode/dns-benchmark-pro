@@ -1,6 +1,6 @@
 """dns-benchmark-pro package."""
 
-__version__ = "1.4.0"
+__version__ = "1.4.1"
 __all__ = [
     "cli",
     "async_engine",

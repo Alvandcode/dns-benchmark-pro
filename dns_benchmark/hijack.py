@@ -13,25 +13,19 @@ compare answers across servers.
 
 from __future__ import annotations
 
-import ipaddress
 import secrets
-import time
-from socket import AF_INET, AF_INET6, SOCK_DGRAM
+from socket import SOCK_DGRAM
 from socket import socket as _UDPSocket
 
+from dns_benchmark.dns_client import resolve_target
 from dns_benchmark.dns_packet import build_query, parse_response
-
-
-def _family(ip: str):
-    addr = ipaddress.ip_address((ip or "").strip())
-    return (AF_INET if addr.version == 4 else AF_INET6), str(addr)
 
 
 def _raw_udp_query(server_ip: str, domain: str, timeout: float):
     """One raw UDP exchange. Returns (parsed_dict|None, error|None)."""
     try:
-        family, clean = _family(server_ip)
-    except Exception:
+        family, sockaddr = resolve_target(server_ip)
+    except ValueError:
         return None, f"invalid DNS server IP: {server_ip!r}"
     try:
         tid, packet = build_query(domain, 1)
@@ -41,7 +35,7 @@ def _raw_udp_query(server_ip: str, domain: str, timeout: float):
         sock = _UDPSocket(family, SOCK_DGRAM)
         sock.settimeout(timeout)
         try:
-            sock.sendto(packet, (clean, 53))
+            sock.sendto(packet, sockaddr)
             resp, _ = sock.recvfrom(5120)
         finally:
             sock.close()

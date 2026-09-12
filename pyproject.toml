@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "dns-benchmark-pro"
-version = "1.4.0"
+version = "1.4.1"
 description = "Advanced DNS Benchmark Tool (UDP, DoH, DoT)"
 readme = "README.md"
 license = { text = "MIT" }
@@ -15,7 +15,7 @@ dependencies = [
 ]
 
 [project.scripts]
-dns-benchmark = "dns_benchmark.cli:run_cli"
+dns-benchmark = "dns_benchmark.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["dns_benchmark*"]

@@ -172,6 +172,13 @@ def test_mean_ci():
     assert mean_ci([]) == (0.0, 0.0, 0.0)
 
 
+def test_mean_ci_ignores_nonfinite():
+    # inf/nan must never crash aggregation (found by fuzzing)
+    assert mean_ci([float("inf"), 80.0, 100.0]) == mean_ci([80.0, 100.0])
+    assert mean_ci([float("nan")]) == (0.0, 0.0, 0.0)
+    assert mean_ci([float("inf")]) == (0.0, 0.0, 0.0)
+
+
 def test_aggregate_ranks_and_ci():
     run1 = [
         {"ip": "a", "name": "a", "protocol": "udp", "score": 90.0,
