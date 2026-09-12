@@ -1,247 +1,299 @@
-# DNS Benchmark Pro
+# 🚀 DNS Benchmark Pro
 
-[![Stars](https://img.shields.io/github/stars/Alvandcode/dns-benchmark-pro?style=flat-square)](https://github.com/Alvandcode/dns-benchmark-pro/stargazers) [![License](https://img.shields.io/github/license/Alvandcode/dns-benchmark-pro?style=flat-square)](./LICENSE) [![Last commit](https://img.shields.io/github/last-commit/Alvandcode/dns-benchmark-pro?style=flat-square)](https://github.com/Alvandcode/dns-benchmark-pro/commits)
+[![Stars](https://img.shields.io/github/stars/Alvandcode/dns-benchmark-pro?style=flat-square)](https://github.com/Alvandcode/dns-benchmark-pro/stargazers)
+[![CI](https://img.shields.io/github/actions/workflow/status/Alvandcode/dns-benchmark-pro/ci.yml?style=flat-square&label=CI)](https://github.com/Alvandcode/dns-benchmark-pro/actions)
+[![Python](https://img.shields.io/badge/python-%3E%3D3.9-blue?style=flat-square)](./pyproject.toml)
+[![License](https://img.shields.io/github/license/Alvandcode/dns-benchmark-pro?style=flat-square)](./LICENSE)
+[![Last commit](https://img.shields.io/github/last-commit/Alvandcode/dns-benchmark-pro?style=flat-square)](https://github.com/Alvandcode/dns-benchmark-pro/commits)
 
-> Advanced DNS benchmark (UDP, DoH, DoT) with scoring, latency stats and HTML/JSON/CSV reports.
+> **EN:** Find your fastest DNS. Benchmark UDP, DoH & DoT resolvers with honest scoring, hijack detection, multi-run comparison and 24/7 monitoring.
+>
+> **FA:** سریع‌ترین DNS را پیدا کن. مقایسه دقیق ریزالورها روی UDP و DoH و DoT با امتیازدهی شفاف، تشخیص هایجک، مقایسه چندرانه و مانیتورینگ دائمی.
 
-<div dir="rtl">
+<div dir="rtl" lang="fa">
 
-## ابزار تست و مقایسه DNS
+## ابزاری برای انتخاب بهترین DNS — نه حدس، با عدد
 
-ابزار پیشرفته برای تست و مقایسه سرعت سرورهای DNS با پشتیبانی از UDP و DoH و DoT؛ همراه با امتیازدهی، آمار تأخیر و گزارش HTML و JSON و CSV.
+کدام DNS برای تو بهتر است؟ گوگل؟ کلادفلر؟ شکان؟ الکترو؟ این ابزار به هر کدام **امتیاز ۰ تا ۱۰۰** می‌دهد تا با عدد تصمیم بگیری — نه با شنیده‌ها.
 
 </div>
 
 ---
 
-# 🚀 DNS Benchmark Pro
+## 📑 Contents | فهرست
 
-## 📌 معرفی پروژه
-
-DNS Benchmark Pro یک ابزار برای تست و مقایسه سرعت DNS سرورها است که به شما کمک می‌کند بهترین DNS را از نظر سرعت، پایداری و میزان خطا انتخاب کنید.
-
----
-
-## ✨ قابلیت‌ها
-
-- تست همزمان DNSها با کنترل همروندی (`--concurrency`)
-- پشتیبانی واقعی از UDP و DoH و DoT (`--protocol udp|doh|dot`)
-- محاسبه دقیق عملکرد:
-  - میانگین زمان پاسخ
-  - میانه (Median)
-  - صدک 95 (P95, مرتب‌شده)
-  - Packet Loss
-  - min/max/stdev
-- سیستم امتیازدهی مستند برای رتبه‌بندی DNSها
-- خروجی گرفتن از نتایج:
-  - CSV (utf-8-sig برای اکسل فارسی)
-  - JSON (utf-8)
-  - HTML (با جدول کامل + نمودار matplotlib)
+- [✨ Features | قابلیت‌ها](#-features--قابلیتها)
+- [⚡ Quick Start | شروع سریع](#-quick-start--شروع-سریع)
+- [🇮🇷 Iran Preset | پریست ایران](#-iran-preset--پریست-ایران)
+- [🕵️ Hijack Detection | تشخیص هایجک](#️-hijack-detection--تشخیص-هایجک)
+- [📈 Compare & Monitor | مقایسه و مانیتورینگ](#-compare--monitor--مقایسه-و-مانیتورینگ)
+- [📊 Sample Output | نمونه خروجی](#-sample-output--نمونه-خروجی)
+- [🧠 How Scoring Works | فرمول امتیاز](#-how-scoring-works--فرمول-امتیاز)
+- [📁 Project Structure | ساختار پروژه](#-project-structure--ساختار-پروژه)
+- [🤝 Contributing | مشارکت](#-contributing--مشارکت)
+- [⭐ Support | حمایت](#-support--حمایت)
+- [📢 Contact | ارتباط](#-contact--ارتباط)
+- [📄 License | لایسنس](#-license--لایسنس)
 
 ---
 
-## ⚙️ نصب
+## ✨ Features | قابلیت‌ها
+
+| | EN | FA |
+|---|---|---|
+| 🔀 | **3 protocols**: UDP, DNS-over-HTTPS, DNS-over-TLS | **۳ پروتکل**: UDP و DoH و DoT |
+| 📊 | **Honest stats**: mean, median, sorted P95, loss, stdev | **آمار صادقانه**: میانگین، میانه، P95 واقعی، لاس، انحراف معیار |
+| 🏆 | **Documented 0–100 score** + grades A+…F | **امتیاز مستند ۰ تا ۱۰۰** + گرید از A+ تا F |
+| 🕵️ | **Hijack detection** via `.invalid` probe (RFC 2606) | **تشخیص هایجک** مسیر UDP با پروب `.invalid` |
+| 🔁 | **Multi-run compare** with 95% confidence intervals | **مقایسه چندرانه** با فاصله اطمینان ۹۵٪ |
+| 🇮🇷 | **Iran preset**: Shecan, Electro, 403.online + public resolvers; internal vs external domains | **پریست ایران**: شکان، الکترو، 403 + عمومی؛ تفکیک دامنه داخلی/خارجی |
+| 📡 | **Monitoring mode**: SQLite history + score trend chart | **مانیتورینگ**: تاریخچه SQLite + نمودار روند امتیاز |
+| 📄 | **Reports**: CSV (Excel-friendly), JSON, HTML + charts | **گزارش**: CSV، JSON، HTML همراه نمودار |
+| 🛡️ | **Safe by design**: NXDOMAIN never counts as success, input validation, no secret leaks | **امنیت در طراحی**: NXDOMAIN موفق حساب نمی‌شود، اعتبارسنجی ورودی |
+
+---
+
+## ⚡ Quick Start | شروع سریع
 
 ```bash
 pip install -r requirements.txt
-```
 
-## ▶️ نحوه اجرا
-
-اجرای ساده:
-
-```bash
+# Simple: benchmark 3 popular resolvers
 python main.py
+
+# Advanced: 20 queries, DoH protocol, reproducible seed
+python main.py --queries 20 --protocol doh --seed 42 --verbose
+
+# Your own servers, IPv6-ready, AAAA records
+python main.py --dns 1.1.1.1 8.8.8.8 178.22.122.100 --qtype AAAA
+
+# Everything is documented:
+python main.py --help
+# ...or as a module:
+python -m dns_benchmark --queries 5
 ```
 
-اجرای پیشرفته:
+<div dir="rtl" lang="fa">
 
 ```bash
-python main.py --queries 20 --timeout 3 --protocol udp
-python main.py --dns 1.1.1.1 8.8.8.8 178.22.122.100 --queries 30 --protocol doh
-python main.py --protocol dot --output-dir results --seed 42 --concurrency 20
-python main.py --qtype AAAA --domains google.com github.com aparat.com --verbose
-python -m dns_benchmark --protocol udp --queries 5
+pip install -r requirements.txt
+
+# ساده: تست ۳ ریزالور معروف
+python main.py
+
+# حرفه‌ای: ۲۰ کوئری با پروتکل DoH و سید ثابت (نتیجه قابل تکرار)
+python main.py --queries 20 --protocol doh --seed 42 --verbose
 ```
 
-## 🇮🇷 پریست ایران و مقایسه پایدار
+</div>
+
+---
+
+## 🇮🇷 Iran Preset | پریست ایران
+
+**EN:** One flag loads Iranian resolvers (Shecan ×2, Electro ×2, 403.online ×2 — the last only routable from Iranian IPs) plus Cloudflare/Google/Quad9, with a query pool split into **internal** (aparat, digikala, divar, shaparak) and **external** domains. Find out which DNS is better for Iranian sites vs the rest of the web:
 
 ```bash
 python main.py --list-presets
 python main.py --preset ir --queries 20 --seed 42
 python main.py --preset ir --domain-group internal --queries 20
 python main.py --preset ir --domain-group external --queries 20
-# repeat N times and rank by mean score with 95% confidence interval:
-python main.py --preset ir --queries 20 --runs 3 --run-delay 2 --seed 42
 ```
 
-خروجی حالت مقایسه (`score=94.47±10.44` یعنی ناپایدار؛ `±0.11` یعنی پایدار) در `results/compare_runs.json` هم ذخیره می‌شود.
+<div dir="rtl" lang="fa">
 
-## 🕵️ تشخیص hijack (پروکسی شفاف)
-
-روی پروتکل `udp` به‌صورت پیش‌فرض برای هر سرور یک پروب `.invalid` (طبق RFC 2606 حتماً باید NXDOMAIN بدهد) فرستاده می‌شود:
-
-- `clean` → پاسخی سالم، interception دیده نشد
-- `HIJACKED (...)` → مسیر UDP هایجک شده؛ عددهای UDP یعنی «تأخیر پروکسی» نه سرور واقعی — با `--protocol doh` مقایسه کنید
-- با `--no-hijack-check` می‌توانید ردش کنید
-
-## 📖 راهنمای تفسیر نتیجه
-
-- `loss > 5%` یعنی قطع‌ووصلی؛ برای گیم/تماس بد است حتی اگر میانگین خوب باشد.
-- اختلاف زیاد `p95` با `average` یعنی ناپایداری (جیتر)؛ در جدول مقایسه به `±` دقت کنید.
-- عدد خیلی خوب ولی مشکوک (مثلاً 0.6ms برای سرور خارجی) را با ستون `hijack` و یک ران `doh` راستی‌آزمایی کنید.
-- یک ران کافی نیست: حداقل `--runs 3 --queries 20` و در ساعت‌های مختلف تکرار کنید.
-
-## 📡 مانیتورینگ دوره‌ای (SQLite + نمودار روند)
+**FA:** با یک فلگ، ریزالورهای ایرانی (شکان، الکترو، 403) به‌علاوه عمومی‌ها لود می‌شود و دامنه‌ها به **داخلی** و **خارجی** تقسیم شده‌اند. این‌طوری می‌فهمی کدام DNS برای سایت‌های داخلی بهتر است و کدام برای بقیه وب:
 
 ```bash
-# every 5 minutes, forever (Ctrl+C stops; history kept in results/history.db):
+python main.py --preset ir --queries 20 --seed 42
+python main.py --preset ir --domain-group internal --queries 20
+python main.py --preset ir --domain-group external --queries 20
+```
+
+> نکته: آی‌پی‌های `10.202.10.x` مخصوص 403 فقط از داخل ایران جواب می‌دهند؛ بیرون ایران `TIMEOUT` می‌گیری که طبیعی است.
+
+</div>
+
+---
+
+## 🕵️ Hijack Detection | تشخیص هایجک
+
+**EN:** On UDP (on by default, `--no-hijack-check` to skip), each server gets a probe for `<random>.example.invalid`. Per RFC 2606 `.invalid` can never exist, so a *clean* path must answer NXDOMAIN. If a server answers NOERROR with an IP, your UDP traffic is intercepted and the latency numbers mean *"proxy latency"*, not the real server — the report flags it as `HIJACKED` and tells you to cross-check with `--protocol doh`:
+
+```bash
+python main.py --dns 1.1.1.1 8.8.8.8 --queries 10
+# hijack=clean  →  numbers trusted |  hijack=HIJACKED (10.0.0.1)  →  verify with DoH
+```
+
+<div dir="rtl" lang="fa">
+
+**FA:** روی UDP به‌صورت خودکار برای هر سرور یک پروب `.invalid` فرستاده می‌شود؛ این دامنه طبق استاندارد هیچ‌وقت وجود ندارد پس جواب سالم حتماً باید NXDOMAIN باشد. اگر سروری آی‌پی برگرداند یعنی مسیر UDP شنود/هایجک شده و عددهایش یعنی «تأخیر پروکسی» نه سرور واقعی — گزارش آن را `HIJACKED` می‌زند و پیشنهاد می‌کند با DoH راستی‌آزمایی کنی.
+
+</div>
+
+---
+
+## 📈 Compare & Monitor | مقایسه و مانیتورینگ
+
+**EN:** One run is noisy — routing, cache state and rate limits move the numbers. Repeat and compare:
+
+```bash
+# 3 runs, ranked by mean score with 95% CI (wide ± means unstable!)
+python main.py --preset ir --queries 20 --runs 3 --run-delay 2 --seed 42
+
+# 24/7 monitoring: tick every 5 min into SQLite, Ctrl+C stops safely
 python main.py --preset ir --queries 10 --watch 300 --seed 42
-# 6 ticks, 60s apart:
+# 6 ticks, 60s apart (great for cron / Task Scheduler):
 python main.py --dns 1.1.1.1 8.8.8.8 --watch 60 --watch-count 6
-# inspect:
+
+# inspect history:
 python main.py --history 10
 python main.py --trend            # all servers + results/trend.png
 python main.py --trend 1.1.1.1    # one server
 ```
 
-هر تیک در دیتابیس ذخیره می‌شود؛ با `--db path/to.db` مسیر را عوض کنید. برای اجرای خودکار (Task Scheduler/cron) از `--watch-count` استفاده کنید تا خودش تمام شود؛ کد خروج مثل حالت عادی است (0 موفق، 2 یعنی همه loss).
+<div dir="rtl" lang="fa">
 
-نمایش همه گزینه‌ها:
+**FA:** یک ران نویز دارد — مسیریابی و کش و لیمیت، عددها را جابه‌جا می‌کنند. راه درست: تکرار و مقایسه با فاصله اطمینان، یا مانیتورینگ دائمی با تاریخچه SQLite و نمودار روند. (مثال: امتیاز `94.47±10.44` یعنی ناپایدار، ولی `99.75±0.11` یعنی پایدار.)
 
-```bash
-python main.py --help
-```
+</div>
 
 ---
 
-## 📊 خروجی‌ها
-
-بعد از اجرا، فایل‌های زیر ساخته می‌شوند (هر اجرا بازنویسی می‌شود):
+## 📊 Sample Output | نمونه خروجی
 
 ```text
+COMPARISON (3 runs, 95% CI)
+1.                1.1.1.1  score=99.75±0.11  grade=A+ avg=0.95±0.32ms loss=0.0% hijack=clean
+2.                8.8.8.8  score=94.47±10.44 grade=A  avg=12.86±23.63ms loss=0.0% hijack=clean
+
+BEST:
+{'recommended': '1.1.1.1', 'score': 99.75, 'grade': 'A+', ...}
+
+FILES:
 results/result.csv
 results/result.json
+results/compare_runs.json
 results/report.html
-results/chart.png
-results/compare_runs.json   # only with --runs N (N>1)
 ```
+
+Reports land in `results/` (overwritten each run, git-ignored): `result.csv` (Excel-friendly `utf-8-sig`), `result.json`, `report.html` (full table + avg-vs-P95 chart), `chart.png`, `compare_runs.json` (multi-run mode), `history.db` + `trend.png` (monitoring mode).
 
 ---
 
-## 📈 نمونه خروجی
+## 🧠 How Scoring Works | فرمول امتیاز
+
+**EN:** Only `NOERROR` (RCODE 0) counts as success — NXDOMAIN never does. Packet loss hurts most, then average speed, then tail instability:
 
 ```text
-1. 1.1.1.1 → 96.4 (A+)
-2. 8.8.8.8 → 92.1 (A)
-3. 9.9.9.9 → 88.7 (B)
+loss >= 100% or zero successful samples  →  score = 0
+otherwise:
+  score = 100 - loss×0.7 - min(avg/4, 20) - min(max(p95-avg, 0)/10, 10)
 ```
 
----
+Grades: `A+ ≥95 · A ≥90 · B ≥80 · C ≥65 · D ≥40 · F <40`.
 
-## 🧠 نحوه عملکرد و فرمول امتیاز
+<div dir="rtl" lang="fa">
 
-این ابزار به ترتیب زیر کار می‌کند:
+**FA:** فقط جواب سالم (`NOERROR`) موفق حساب می‌شود؛ NXDOMAIN هرگز. بیشترین جریمه برای قطعی (loss) است، بعد میانگین تأخیر، بعد ناپایداری (فاصله P95 تا میانگین). اگر سروری ۱۰۰٪ لاس بدهد امتیازش **صفر** می‌شود — تعارف نداریم!
 
-1. تولید درخواست DNS (دامنه‌های واقعی؛ با `--bypass-cache` ساب‌دامین تصادفی)
-2. ارسال همزمان درخواست‌ها به سرورها (UDP/53 یا DoH/443 یا DoT/853)
-3. اندازه‌گیری زمان پاسخ
-4. تحلیل نتایج (average/median/p95/loss)
-5. امتیازدهی و رتبه‌بندی
-6. تولید گزارش نهایی
-
-فرمول امتیاز (0 تا 100):
-
-```text
-loss >= 100% یا بدون نمونه موفق → 0
-وگرنه: 100 - loss*0.7 - min(avg/4, 20) - min(max(p95-avg,0)/10, 10)
-```
-
-فقط پاسخ NOERROR (RCODE 0) موفق حساب می‌شود؛ NXDOMAIN موفق نیست.
+</div>
 
 ---
 
-## ⚠️ نکات شبکه و حریم خصوصی
+## ⚠️ Network & Privacy Notes | نکات شبکه و حریم خصوصی
 
-- در ویندوز/ایران ممکن است UDP/53 توسط فایروال یا ISP محدود شود؛ در این صورت `TIMEOUT` می‌گیرید. با `--protocol doh` یا `dot` دوباره امتحان کنید.
-- کوئری‌ها به سرورهای ثالث ارسال می‌شود؛ دامنه‌های حساس را بنچمارک نکنید.
-- برای نتیجه پایدار چند بار اجرا کنید و `--seed` بدهید تا قابل بازتولید شود.
+- **EN:** On some networks (notably Iran) UDP/53 is filtered or proxied — `TIMEOUT` or suspiciously perfect numbers? Check the `hijack` column and retry with `--protocol doh`/`dot`.
+- **FA:** در بعضی شبکه‌ها (مخصوصاً ایران) پورت UDP/53 فیلتر یا پروکسی می‌شود؛ اگر `TIMEOUT` گرفتی یا عددها زیادی خوب بودند، ستون hijack را ببین و با DoH دوباره تست بگیر.
+- Queries go to third-party resolvers — don't benchmark sensitive domains. / کوئری‌ها به سرور ثالث می‌رود؛ دامنه حساس تست نکن.
+- Reproducible runs: always pass `--seed`. / برای نتیجه قابل تکرار همیشه `--seed` بده.
 
 ---
 
-## 📁 ساختار پروژه
+## 📁 Project Structure | ساختار پروژه
 
 ```text
 dns_benchmark/
-├── cli.py
-├── async_engine.py
-├── dns_client.py
-├── doh_client.py
-├── dot_client.py
-├── dns_packet.py
-├── statistics.py
-├── scoring.py
-├── exporter.py
-├── dashboard.py
-├── advisor.py
-├── hijack.py
-├── compare.py
-├── monitor.py
-├── store.py
-├── presets.py
-├── qtypes.py
-└── query_generator.py
-tests/
+├── cli.py            # flags, runs, watch/history/trend wiring
+├── async_engine.py   # concurrent engine (UDP/DoH/DoT)
+├── dns_client.py     # UDP + TCP fallback
+├── doh_client.py     # DNS-over-HTTPS
+├── dot_client.py     # DNS-over-TLS
+├── dns_packet.py     # builder, validator, response parser
+├── hijack.py         # transparent-proxy detection
+├── compare.py        # multi-run aggregation (mean ± 95% CI)
+├── monitor.py        # watch loop + trend chart
+├── store.py          # SQLite history
+├── presets.py        # named presets (--preset ir)
+├── statistics.py     # mean/median/sorted-P95/loss/…
+├── scoring.py        # 0–100 score + grades
+├── exporter.py       # CSV / JSON
+├── dashboard.py      # HTML report
+├── advisor.py        # best-pick + warnings
+├── qtypes.py         # A/AAAA normalisation
+└── query_generator.py# real-domain pool (+IR sites), seedable
 presets/ir.json
+tests/               # 64 tests (pytest -q)
 .github/workflows/ci.yml
 ```
 
-اجرای تست‌ها:
-
 ```bash
-pytest -q
+pip install -r requirements.txt   # requests, matplotlib
+pytest -q                         # run the test suite
+pip install -e .                  # install the `dns-benchmark` command
 ```
 
 ---
 
-## ⭐ حمایت از پروژه
+## 🤝 Contributing | مشارکت
 
-اگر این پروژه برایت مفید بود، می‌توانی:
+**EN:** Issues and Pull Requests are welcome! Please read [`CONTRIBUTING.md`](./CONTRIBUTING.md): fork, create a branch (`feat/my-feature`), add tests for your change, and open a PR against `main`. Bug reports with repro steps and logs get fixed fastest — use the Bug Report template.
 
-به پروژه در GitHub ستاره بدهی
+<div dir="rtl" lang="fa">
 
-آن را با دیگران به اشتراک بگذاری
+**FA:** ایشو و پول‌ریکوئست همیشه خوش‌آمد است! لطفاً اول [`CONTRIBUTING.md`](./CONTRIBUTING.md) را بخوان: فورک کن، برنچ بساز، برای تغییرت تست اضافه کن و PR بزن. گزارش باگ با قدم‌های بازتولید و لاگ، سریع‌تر فیکس می‌شود.
 
----
-
-## 📢 کانال ارتباطی
-
-@a_c_official
+</div>
 
 ---
 
-## 📄 لایسنس
+## ⭐ Support | حمایت
 
-MIT License
+**EN:** If this tool saved you from a slow DNS, support it — it takes 10 seconds:
+
+- ⭐ **Star the repo** — it keeps the project alive and visible
+- 📣 **Share it** with anyone still guessing their DNS
+- 🐛 **Report bugs & ideas** via Issues — every report makes it better
+
+<div dir="rtl" lang="fa">
+
+**FA:** اگر این ابزار تو را از شر یک DNS کند نجات داد، حمایتش کن — فقط ۱۰ ثانیه طول می‌کشد:
+
+- ⭐ **به ریپو ستاره بده** — همین ستاره انگیزه ادامه و دیده‌شدن پروژه است
+- 📣 **با بقیه به اشتراک بذار** — هر کسی که هنوز DNSاش را شانسی انتخاب می‌کند
+- 🐛 **باگ و ایده را ایشو کن** — هر گزارش، پروژه را بهتر می‌کند
+
+</div>
 
 ---
 
-## 👨‍💻 توسعه‌دهنده
+## 📢 Contact | ارتباط
 
-این پروژه برای تحلیل و تست عملکرد DNS سرورها توسعه داده شده است.
+- 💬 Telegram channel: **[@a_c_official](https://t.me/a_c_official)** — news, updates and support
+- 🌐 Website: [alvandcode.github.io](https://alvandcode.github.io)
+- 🛡️ Security issues? **Do NOT open a public issue** — see [`SECURITY.md`](./SECURITY.md)
+
+<div dir="rtl" lang="fa">
+
+- 💬 کانال تلگرام: **[@a_c_official](https://t.me/a_c_official)** — اخبار، آپدیت‌ها و پشتیبانی
+- 🌐 وب‌سایت: [alvandcode.github.io](https://alvandcode.github.io)
+
+</div>
 
 ---
 
-## Contributing / مشارکت
-
-- EN: Issues and Pull Requests are welcome. Please see `CONTRIBUTING.md`.
-- FA: برای گزارش مشکل یا پیشنهاد قابلیت جدید، لطفا ایشو یا پول‌ریکوئست ثبت کنید.
-
-## License / لایسنس
+## 📄 License | لایسنس
 
 MIT — see [LICENSE](./LICENSE).
 
-## Contact / ارتباط
-
-- Telegram: https://t.me/a_c_official
-- Website: https://alvandcode.github.io
+👨‍💻 Built for everyone who refuses to guess their DNS. / ساخته‌شده برای همه کسانی که DNSشان را شانسی انتخاب نمی‌کنند.
