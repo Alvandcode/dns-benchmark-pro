@@ -1,189 +1,392 @@
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>آموزش DNS Benchmark Pro | گوشی و کامپیوتر</title>
-<meta name="description" content="آموزش قدم‌به‌قدم استفاده از DNS Benchmark Pro در گوشی (اندروید/آیفون) و ویندوز، لینوکس و مک"/>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>آموزش قدم‌به‌قدم DNS Benchmark Pro | گوشی و کامپیوتر</title>
+<meta name="description" content="آموزش تصویری و قدم‌به‌قدم استفاده از ابزار DNS Benchmark Pro در گوشی (اندروید و آیفون) و کامپیوتر (ویندوز، لینوکس و مک) — پیدا کردن سریع‌ترین DNS با عدد و نمودار">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-:root{
-  --bg:#0b1020; --bg2:#111936; --card:#ffffff; --ink:#1a2340; --muted:#5b6584;
-  --brand:#7c3aed; --brand2:#06b6d4; --ok:#16a34a; --warn:#d97706; --radius:18px;
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:Vazirmatn,Tahoma,"Segoe UI",sans-serif;background:linear-gradient(180deg,#0b1020,#131b3d 60%,#0b1020);color:#eef1ff;line-height:1.9}
-.wrap{max-width:960px;margin:0 auto;padding:0 18px 80px}
-.hero{text-align:center;padding:64px 18px 30px}
-.badge{display:inline-block;background:rgba(124,58,237,.18);border:1px solid rgba(124,58,237,.5);color:#d9ccff;padding:6px 18px;border-radius:999px;font-size:.85rem;margin-bottom:18px}
-.hero h1{font-size:clamp(1.7rem,5vw,2.8rem);margin:.2em 0;background:linear-gradient(90deg,#c4b5fd,#67e8f9);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:900}
-.hero p{color:#b9c1e4;max-width:640px;margin:0 auto}
-.tabs{display:flex;gap:12px;justify-content:center;margin:34px 0 8px;flex-wrap:wrap;position:sticky;top:0;z-index:5;padding:12px 0;background:linear-gradient(180deg,rgba(11,16,32,.96),rgba(11,16,32,.75));backdrop-filter:blur(6px)}
-.tab{border:2px solid rgba(255,255,255,.18);background:rgba(255,255,255,.06);color:#fff;font-family:inherit;font-size:1.05rem;font-weight:700;padding:14px 34px;border-radius:999px;cursor:pointer;transition:.25s}
-.tab small{display:block;font-size:.75rem;font-weight:400;color:#c6cdf2}
-.tab.active{background:linear-gradient(90deg,var(--brand),var(--brand2));border-color:transparent;box-shadow:0 8px 30px rgba(124,58,237,.45);transform:translateY(-2px)}
-.panel{display:none;animation:fade .35s ease}
-.panel.active{display:block}
-@keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-.card{background:var(--card);color:var(--ink);border-radius:var(--radius);padding:26px 24px;margin:20px 0;box-shadow:0 18px 50px rgba(0,0,0,.35)}
-.card h2{margin:0 0 6px;font-size:1.3rem}
-.card h2 .step{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-size:1.1rem;margin-left:10px}
-.card p{margin:.5em 0;color:#334}
-.note{background:#f0f9ff;border-right:5px solid var(--brand2);border-radius:12px;padding:12px 16px;margin:14px 0;font-size:.95rem;color:#334}
-.warn{background:#fffbeb;border-right:5px solid var(--warn);border-radius:12px;padding:12px 16px;margin:14px 0;font-size:.95rem;color:#574006}
-.good{background:#f0fdf4;border-right:5px solid var(--ok);border-radius:12px;padding:12px 16px;margin:14px 0;font-size:.95rem;color:#14532d}
-.code{position:relative;background:#0f1530;color:#d7f9ff;border-radius:14px;padding:16px 16px 16px 60px;margin:14px 0;overflow-x:auto;direction:ltr;text-align:left}
-.code pre{margin:0;font-family:Consolas,Menlo,monospace;font-size:.88rem;line-height:1.8;white-space:pre-wrap}
-.copy{position:absolute;top:10px;left:10px;border:none;background:linear-gradient(90deg,var(--brand),var(--brand2));color:#fff;font-family:inherit;font-size:.75rem;padding:6px 14px;border-radius:8px;cursor:pointer}
-.copy.ok{background:var(--ok)}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:14px 0}
-.mini{background:#f6f4ff;border:1px solid #e2d9ff;border-radius:14px;padding:16px}
-.mini b{display:block;margin-bottom:4px}
-.mini span{color:var(--muted);font-size:.9rem}
-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.92rem}
-th,td{border:1px solid #e3e6f5;padding:8px 10px;text-align:center}
-th{background:#eef0ff}
-.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin:40px 0 10px}
-.btn{display:inline-block;text-decoration:none;font-weight:800;padding:14px 30px;border-radius:999px;transition:.25s}
-.btn.star{background:linear-gradient(90deg,#f59e0b,#ef4444);color:#fff;box-shadow:0 10px 28px rgba(239,68,68,.4)}
-.btn.tg{background:linear-gradient(90deg,#0ea5e9,#22d3ee);color:#fff;box-shadow:0 10px 28px rgba(14,165,233,.4)}
-.btn.gh{background:#fff;color:#111936}
-.btn:hover{transform:translateY(-3px)}
-footer{text-align:center;color:#8b93b8;font-size:.85rem;padding:30px 0 10px}
-footer a{color:#a5b4fc}
-#top{position:fixed;bottom:20px;left:20px;width:48px;height:48px;border-radius:50%;border:none;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-size:1.3rem;cursor:pointer;display:none;box-shadow:0 10px 25px rgba(0,0,0,.4)}
-@media(max-width:560px){.card{padding:20px 16px}.tab{padding:12px 22px;font-size:.95rem}}
+  :root{
+    --bg:#0b1220; --bg2:#0f1a30; --card:#14213d; --card2:#1a2a4d;
+    --line:rgba(255,255,255,.09); --txt:#eef2ff; --muted:#a9b4d0;
+    --teal:#2dd4bf; --teal-d:#0d9488; --amber:#fbbf24; --blue:#60a5fa;
+    --green:#34d399; --rose:#fb7185; --radius:18px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; color:var(--txt);
+    font-family:"Vazirmatn",Tahoma,"IRANSans","Segoe UI",sans-serif;
+    background:
+      radial-gradient(1100px 500px at 85% -5%, rgba(45,212,191,.16), transparent 60%),
+      radial-gradient(900px 480px at 10% 0%, rgba(96,165,250,.16), transparent 60%),
+      linear-gradient(180deg,var(--bg),var(--bg2));
+    line-height:2; font-size:16px;
+  }
+  a{color:var(--teal)}
+  .wrap{max-width:1060px;margin:0 auto;padding:0 20px 90px}
+
+  /* ---------- Hero ---------- */
+  .hero{position:relative;overflow:hidden;border-radius:0 0 34px 34px;
+    background:linear-gradient(135deg,#0ea5a5 0%,#2563eb 55%,#7c3aed 100%);
+    padding:64px 20px 70px;text-align:center;box-shadow:0 24px 70px rgba(0,0,0,.45)}
+  .hero::before,.hero::after{content:"";position:absolute;border-radius:50%;filter:blur(2px);opacity:.28}
+  .hero::before{width:340px;height:340px;background:#fff;top:-160px;left:-90px}
+  .hero::after{width:260px;height:260px;background:#fde68a;bottom:-140px;right:-70px}
+  .hero h1{margin:0 0 10px;font-size:clamp(26px,5vw,46px);font-weight:900;text-shadow:0 3px 18px rgba(0,0,0,.35)}
+  .hero p{margin:8px auto 0;max-width:720px;color:#f1f5ff;font-size:clamp(15px,2.6vw,19px)}
+  .hero .badges{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:22px}
+  .badge{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.35);
+    padding:6px 16px;border-radius:999px;font-size:14px;font-weight:700;backdrop-filter:blur(6px)}
+  .hero .cta{margin-top:26px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .hero .cta a{text-decoration:none;font-weight:900;padding:12px 30px;border-radius:999px;transition:.2s}
+  .btn-star{background:#fff;color:#111c33}
+  .btn-tg{background:rgba(0,0,0,.3);color:#fff;border:1px solid rgba(255,255,255,.5)}
+  .hero .cta a:hover{transform:translateY(-3px)}
+
+  /* ---------- Sticky nav ---------- */
+  nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(12px);
+    background:rgba(11,18,32,.82);border-bottom:1px solid var(--line)}
+  nav .inner{max-width:1060px;margin:0 auto;padding:10px 16px;display:flex;gap:8px;
+    overflow-x:auto;scrollbar-width:none}
+  nav .inner::-webkit-scrollbar{display:none}
+  nav a{flex:0 0 auto;text-decoration:none;color:var(--txt);font-weight:700;font-size:14px;
+    padding:8px 16px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.04);
+    transition:.2s}
+  nav a:hover,nav a.active{background:var(--teal);color:#06251f;border-color:var(--teal)}
+
+  /* ---------- Sections & cards ---------- */
+  section{margin-top:46px}
+  .sec-head{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+  .sec-head .ico{width:52px;height:52px;flex:0 0 52px;border-radius:16px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--teal-d),#2563eb);box-shadow:0 10px 26px rgba(45,212,191,.25)}
+  .sec-head .ico svg{width:28px;height:28px;stroke:#fff}
+  .sec-head h2{margin:0;font-size:clamp(20px,3.6vw,28px);font-weight:900}
+  .sec-head small{display:block;color:var(--muted);font-weight:400;font-size:14px}
+  .card{background:linear-gradient(180deg,var(--card),var(--card2));
+    border:1px solid var(--line);border-radius:var(--radius);padding:24px;margin:16px 0;
+    box-shadow:0 14px 40px rgba(0,0,0,.35)}
+  .card h3{margin:0 0 8px;font-size:19px;color:var(--amber)}
+  .card h3 .tag{font-size:12px;background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.4);
+    color:var(--amber);border-radius:999px;padding:2px 12px;margin-right:8px;vertical-align:middle}
+  .card h3 .tag.ok{background:rgba(52,211,153,.12);border-color:rgba(52,211,153,.45);color:var(--green)}
+  .card h3 .tag.warn{background:rgba(251,113,133,.12);border-color:rgba(251,113,133,.45);color:var(--rose)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin:14px 0}
+  .mini{background:rgba(255,255,255,.045);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .mini b{color:var(--teal)}
+  ol.steps,ul.tips{margin:10px 0;padding-right:22px}
+  ol.steps li,ul.tips li{margin:8px 0}
+  ol.steps li::marker{color:var(--teal);font-weight:900}
+
+  /* ---------- Code ---------- */
+  .code{position:relative;background:#070d1a;border:1px solid var(--line);border-radius:14px;
+    margin:12px 0;overflow:hidden}
+  .code header{display:flex;justify-content:space-between;align-items:center;
+    padding:6px 14px;font-size:12.5px;color:var(--muted);border-bottom:1px solid var(--line);
+    background:rgba(255,255,255,.03)}
+  .code pre{direction:ltr;text-align:left;margin:0;padding:14px 16px;overflow-x:auto;
+    font-family:Consolas,"Cascadia Code",monospace;font-size:13.5px;line-height:1.9;color:#d7f9f0}
+  .code .out{border-top:1px dashed var(--line);color:#9fe8c9}
+  .copy{cursor:pointer;border:1px solid var(--teal);background:transparent;color:var(--teal);
+    border-radius:9px;padding:3px 14px;font-family:inherit;font-size:12.5px;font-weight:700;transition:.2s}
+  .copy:hover{background:var(--teal);color:#06251f}
+
+  /* ---------- Callouts & table ---------- */
+  .note{border-radius:14px;padding:14px 18px;margin:12px 0;font-size:15px;border:1px solid}
+  .note.info{background:rgba(96,165,250,.1);border-color:rgba(96,165,250,.4)}
+  .note.ok{background:rgba(52,211,153,.1);border-color:rgba(52,211,153,.4)}
+  .note.warn{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.45)}
+  .note.bad{background:rgba(251,113,133,.1);border-color:rgba(251,113,133,.45)}
+  .note b{display:block;margin-bottom:2px}
+  table{width:100%;border-collapse:collapse;font-size:14.5px;margin:12px 0}
+  th,td{border:1px solid var(--line);padding:10px 12px;text-align:right;vertical-align:top}
+  th{background:rgba(45,212,191,.12);color:var(--teal)}
+  tr:nth-child(even) td{background:rgba(255,255,255,.025)}
+  .tbl-wrap{overflow-x:auto;border-radius:14px}
+
+  footer{margin-top:60px;text-align:center;color:var(--muted);font-size:14px}
+  footer .links{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+  footer .links a{text-decoration:none;font-weight:700;border:1px solid var(--teal);
+    border-radius:999px;padding:8px 26px}
+  footer .top{display:inline-block;margin-top:12px;text-decoration:none;font-weight:700;
+    border:1px solid var(--teal);border-radius:999px;padding:8px 26px}
+
+  @media (max-width:640px){
+    body{font-size:15px}
+    .card{padding:18px}
+    .sec-head .ico{width:44px;height:44px;flex-basis:44px}
+  }
 </style>
 </head>
-<body>
+<body id="top">
+
+<header class="hero">
+  <h1>آموزش قدم‌به‌قدم DNS Benchmark Pro</h1>
+  <p>سریع‌ترین DNS را با عدد و نمودار پیدا کن — از نصب تا خواندن نتیجه، در گوشی و کامپیوتر</p>
+  <div class="badges">
+    <span class="badge">اندروید و آیفون</span>
+    <span class="badge">ویندوز</span>
+    <span class="badge">لینوکس</span>
+    <span class="badge">مک</span>
+    <span class="badge">UDP / DoH / DoT</span>
+    <span class="badge">پریست ایران</span>
+  </div>
+  <div class="cta">
+    <a class="btn-star" href="https://github.com/Alvandcode/dns-benchmark-pro" target="_blank" rel="noopener">⭐ ستاره به پروژه</a>
+    <a class="btn-tg" href="https://t.me/a_c_official" target="_blank" rel="noopener">📢 کانال تلگرام</a>
+  </div>
+</header>
+
+<nav><div class="inner" id="navlinks">
+  <a href="#mobile">گوشی</a>
+  <a href="#windows">ویندوز</a>
+  <a href="#linux">لینوکس</a>
+  <a href="#macos">مک</a>
+  <a href="#preset">پریست ایران</a>
+  <a href="#monitor">مانیتورینگ</a>
+  <a href="#faq">عیب‌یابی</a>
+</div></nav>
+
 <div class="wrap">
 
-  <div class="hero">
-    <div class="badge">DNS Benchmark Pro • نسخه 1.4.0</div>
-    <h1>🎓 آموزش قدم‌به‌قدم: سریع‌ترین DNS را خودت پیدا کن</h1>
-    <p>بدون حدس و شنیده‌ها — با عدد و نمودار. یکی از دو مسیر زیر را انتخاب کن:</p>
+<!-- ================= MOBILE ================= -->
+<section id="mobile">
+  <div class="sec-head">
+    <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg></span>
+    <h2>بخش اول: استفاده با گوشی<small>بدون روت — از ساده به سخت مرتب شده</small></h2>
   </div>
 
-  <div class="tabs" role="tablist">
-    <button class="tab active" onclick="show('phone',this)">📱 با گوشی<small>اندروید و آیفون • بدون روت</small></button>
-    <button class="tab" onclick="show('desktop',this)">🖥️ با کامپیوتر<small>ویندوز • لینوکس • مک</small></button>
-  </div>
-
-  <!-- ================= PHONE ================= -->
-  <div class="panel active" id="phone">
-    <div class="card">
-      <h2><span class="step">۱</span> نصب ترموکس (فقط اندروید)</h2>
-      <p>از <b>F-Droid</b> برنامه <b>Termux</b> را نصب کن (نسخه گوگل‌پلی قدیمی است). بعد این دستورها را یکی‌یکی بزن:</p>
-      <div class="code"><button class="copy" onclick="copy(this)">کپی</button><pre>pkg update && pkg install python git -y
-git clone https://github.com/Alvandcode/dns-benchmark-pro
+  <div class="card">
+    <h3>اندروید: ترموکس (Termux) <span class="tag ok">پیشنهاد ما</span></h3>
+    <p>ترموکس یک ترمینال واقعی لینوکس داخل اندروید است؛ یعنی همان نسخه کامپیوتر را روی گوشی اجرا می‌کنی.</p>
+    <ol class="steps">
+      <li><b>نصب ترموکس:</b> از F-Droid یا صفحه GitHub ترموکس نصب کن <b>(نسخه گوگل‌پلی قدیمی و خراب است).</b></li>
+      <li><b>نصب پایتون و دریافت پروژه:</b>
+        <div class="code"><header><span>termux</span><button class="copy">کپی</button></header><pre>pkg update &amp;&amp; pkg install -y python git
+git clone https://github.com/Alvandcode/dns-benchmark-pro.git
 cd dns-benchmark-pro
 pip install requests matplotlib</pre></div>
-      <div class="note">اگر نصب <b>matplotlib</b> طول کشید یا خطا داد اشکالی ندارد — ابزار بدون آن هم کامل کار می‌کند، فقط نمودار ساخته نمی‌شود.</div>
-    </div>
-
-    <div class="card">
-      <h2><span class="step">۲</span> اولین تست ۳۰ ثانیه‌ای</h2>
-      <div class="code"><button class="copy" onclick="copy(this)">کپی</button><pre>python main.py --queries 5 --seed 42</pre></div>
-      <p>اگر جدول امتیازها را دیدی، یعنی همه‌چیز درست نصب شده. 🎉</p>
-    </div>
-
-    <div class="card">
-      <h2><span class="step">۳</span> تست مخصوص ایران 🇮🇷</h2>
-      <div class="code"><button class="copy" onclick="copy(this)">کپی</button><pre>python main.py --preset ir --queries 10 --seed 42</pre></div>
-      <p>به ستون <b>hijack</b> دقت کن:</p>
-      <div class="grid">
-        <div class="mini"><b>✅ clean</b><span>مسیر سالم است، به عددها اعتماد کن</span></div>
-        <div class="mini"><b>🚨 HIJACKED</b><span>اینترنتت UDP را دستکاری می‌کند! دستور زیر را بزن:</span></div>
-      </div>
-      <div class="code"><button class="copy" onclick="copy(this)">کپی</button><pre>python main.py --preset ir --queries 10 --protocol doh --seed 42</pre></div>
-    </div>
-
-    <div class="card">
-      <h2><span class="step">۴</span> اعمال نتیجه روی گوشی</h2>
-      <p>هر کدام <b>امتیاز بالاتر</b> و <b>± کوچک‌تر</b> داشت، همان DNS توست. آن را در تنظیمات وای‌فای گوشی (گزینه DNS خصوصی / Private DNS) وارد کن و تمام!</p>
-      <div class="warn">⚠️ <b>کاربران آیفون:</b> روی iOS ترموکس وجود ندارد. با برنامه a-Shell فقط حالت DoH جواب می‌دهد (<b>--protocol doh</b>). اگر نشد، با کامپیوتر تست بگیر و فقط نتیجه را روی گوشی اعمال کن.</div>
-    </div>
+      </li>
+      <li><b>اولین تست (۳۰ ثانیه‌ای):</b>
+        <div class="code"><header><span>termux</span><button class="copy">کپی</button></header><pre>python main.py --queries 5 --seed 42</pre></div>
+        اگر جدول امتیازها را دیدی، همه‌چیز درست نصب شده.
+      </li>
+      <li><b>تست مخصوص ایران:</b>
+        <div class="code"><header><span>termux</span><button class="copy">کپی</button></header><pre>python main.py --preset ir --queries 10 --seed 42</pre></div>
+      </li>
+      <li><b>اعمال نتیجه:</b> هر کدام امتیاز بالاتر و ± کوچک‌تر داشت، همان DNS توست؛ آن را در تنظیمات وای‌فای گوشی (DNS خصوصی / Private DNS) وارد کن.</li>
+    </ol>
+    <div class="note info"><b>نصب matplotlib</b>اگر نصب آن طول کشید یا خطا داد اشکالی ندارد — ابزار بدون آن هم کامل کار می‌کند، فقط نمودار ساخته نمی‌شود.</div>
   </div>
 
-  <!-- ================= DESKTOP ================= -->
-  <div class="panel" id="desktop">
-    <div class="card">
-      <h2><span class="step">۱</span> نصب پایتون (فقط بار اول)</h2>
-      <div class="grid">
-        <div class="mini"><b>🪟 ویندوز</b><span>از python.org نسخه 3.9+ — تیک Add to PATH یادت نره</span></div>
-        <div class="mini"><b>🐧 لینوکس</b><span><span dir="ltr">sudo apt install python3 python3-pip git -y</span></span></div>
-        <div class="mini"><b>🍎 مک</b><span><span dir="ltr">brew install python git</span> یا نصب از python.org</span></div>
-      </div>
-    </div>
+  <div class="card">
+    <h3>آیفون (iOS) <span class="tag warn">توصیه نمی‌شود</span></h3>
+    <p>اپل اجازه ترمینال واقعی مثل ترموکس را نمی‌دهد. دو راه داری:</p>
+    <ul class="tips">
+      <li><b>راه ساده:</b> با کامپیوتر تست بگیر و فقط نتیجه (آی‌پی برنده) را روی گوشی اعمال کن.</li>
+      <li><b>راه فنی:</b> با برنامه a-Shell فقط حالت DoH جواب می‌دهد:
+        <div class="code"><header><span>a-shell</span><button class="copy">کپی</button></header><pre>python main.py --queries 5 --protocol doh --seed 42</pre></div>
+      </li>
+    </ul>
+  </div>
+</section>
 
-    <div class="card">
-      <h2><span class="step">۲</span> دانلود و نصب ابزار</h2>
-      <div class="code"><button class="copy" onclick="copy(this)">کپی</button><pre>git clone https://github.com/Alvandcode/dns-benchmark-pro
+<!-- ================= WINDOWS ================= -->
+<section id="windows">
+  <div class="sec-head">
+    <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="4" width="20" height="14" rx="2"/><line x1="8" y1="22" x2="16" y2="22"/><line x1="12" y1="18" x2="12" y2="22"/></svg></span>
+    <h2>بخش دوم: ویندوز (۱۰ و ۱۱)<small>حدود ۵ دقیقه تا اولین جدول امتیاز</small></h2>
+  </div>
+  <div class="card">
+    <ol class="steps">
+      <li><b>نصب پایتون:</b> از <span dir="ltr">python.org</span> نسخه 3.9 یا جدیدتر را دانلود کن و موقع نصب تیک <span dir="ltr">Add python.exe to PATH</span> را حتماً بزن.</li>
+      <li><b>دریافت و نصب پروژه</b> (در CMD یا PowerShell):
+        <div class="code"><header><span>cmd</span><button class="copy">کپی</button></header><pre>git clone https://github.com/Alvandcode/dns-benchmark-pro.git
 cd dns-benchmark-pro
 pip install -r requirements.txt</pre></div>
-      <div class="note">لینوکس/مک: اگر <span dir="ltr">pip</span> پیدا نشد از <span dir="ltr">pip3</span> استفاده کن. ویندوز: اگر <span dir="ltr">python</span> کار نکرد، <span dir="ltr">py</span> را امتحان کن.</div>
-    </div>
+        اگر <span dir="ltr">python</span> شناخته نشد از <span dir="ltr">py</span> استفاده کن: <span dir="ltr">py main.py --queries 5</span>
+      </li>
+      <li><b>تست سریع:</b>
+        <div class="code"><header><span>cmd</span><button class="copy">کپی</button></header><pre>python main.py --queries 5 --seed 42</pre><pre class="out">BEST:
+{'recommended': '1.1.1.1', 'score': 99.5, ...}</pre></div>
+      </li>
+      <li><b>تست کامل مخصوص ایران:</b>
+        <div class="code"><header><span>cmd</span><button class="copy">کپی</button></header><pre>python main.py --preset ir --queries 20 --seed 42</pre></div>
+        فایل <span dir="ltr">results\report.html</span> را در مرورگر باز کن تا جدول و نمودار را ببینی.
+      </li>
+    </ol>
+    <div class="note warn"><b>اگر همه TIMEOUT شدند</b>فایروال یا آنتی‌ویروس پورت UDP/53 را بسته است؛ اول با <span dir="ltr">--protocol doh</span> امتحان کن.</div>
+  </div>
+</section>
 
-    <div class="card">
-      <h2><span class="step">۳</span> اجرا — از ساده تا حرفه‌ای</h2>
-      <div class="code"><button class="copy" onclick="copy(this)">کپی</button><pre># تست سریع
-python main.py --queries 5
+<!-- ================= LINUX ================= -->
+<section id="linux">
+  <div class="sec-head">
+    <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="2" y1="8" x2="22" y2="8"/><circle cx="4.5" cy="5.5" r=".8"/></svg></span>
+    <h2>بخش سوم: لینوکس (اوبونتو / دبیان)<small>سریع‌ترین مسیر؛ همه‌چیز با مدیر بسته نصب می‌شود</small></h2>
+  </div>
+  <div class="card">
+    <ol class="steps">
+      <li><b>نصب پیش‌نیازها:</b>
+        <div class="code"><header><span>bash</span><button class="copy">کپی</button></header><pre>sudo apt update &amp;&amp; sudo apt install -y python3 python3-pip git
+git clone https://github.com/Alvandcode/dns-benchmark-pro.git
+cd dns-benchmark-pro
+pip install -r requirements.txt</pre></div>
+        اگر <span dir="ltr">pip</span> پیدا نشد از <span dir="ltr">pip3</span> استفاده کن.
+      </li>
+      <li><b>اجرا:</b>
+        <div class="code"><header><span>bash</span><button class="copy">کپی</button></header><pre>python3 main.py --preset ir --queries 20 --seed 42
+python3 main.py --preset ir --queries 20 --runs 3 --seed 42</pre></div>
+      </li>
+    </ol>
+    <div class="note ok"><b>چرا لینوکس بهترین است؟</b>نصب، اجرای خودکار با cron و ساخت خروجی‌ها همه بدون دردسر اضافه انجام می‌شود.</div>
+  </div>
+</section>
 
-# تست کامل مخصوص ایران
-python main.py --preset ir --queries 20 --seed 42
+<!-- ================= MACOS ================= -->
+<section id="macos">
+  <div class="sec-head">
+    <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="3"/><line x1="12" y1="18.5" x2="12" y2="18.6"/></svg></span>
+    <h2>بخش چهارم: مک (macOS)<small>با Homebrew در سه قدم</small></h2>
+  </div>
+  <div class="card">
+    <ol class="steps">
+      <li><b>نصب Homebrew</b> (اگر نداری، دستورش در سایت brew.sh است) <b>و بعد:</b>
+        <div class="code"><header><span>bash</span><button class="copy">کپی</button></header><pre>brew install python git
+git clone https://github.com/Alvandcode/dns-benchmark-pro.git
+cd dns-benchmark-pro
+pip3 install -r requirements.txt</pre></div>
+      </li>
+      <li><b>اجرا:</b>
+        <div class="code"><header><span>bash</span><button class="copy">کپی</button></header><pre>python3 main.py --preset ir --queries 20 --seed 42</pre></div>
+      </li>
+    </ol>
+  </div>
+</section>
 
-# مقایسه مطمئن: 3 بار تکرار با فاصله اطمینان
-python main.py --preset ir --queries 20 --runs 3 --seed 42
-
-# مانیتورینگ: هر 5 دقیقه یک تست (بهترین DNS در طول روز)
-python main.py --preset ir --queries 10 --watch 300 --seed 42
-python main.py --trend</pre></div>
-    </div>
-
-    <div class="card">
-      <h2><span class="step">۴</span> خواندن نتیجه</h2>
-      <p>فایل‌ها در پوشه <b>results</b> ساخته می‌شوند — <b>report.html</b> را در مرورگر باز کن (جدول + نمودار):</p>
-      <table>
-        <tr><th>به چه چیزی نگاه کنم؟</th><th>یعنی چه؟</th></tr>
-        <tr><td><b>score</b> بالاتر</td><td>DNS بهتر (۰ تا ۱۰۰)</td></tr>
-        <tr><td><b>±</b> کوچک‌تر</td><td>پایدارتر (مثلاً ‎±0.11 عالی، ‎±10 ناپایدار‎)</td></tr>
-        <tr><td><b>hijack = HIJACKED</b></td><td>نتیجه UDP را قبول نکن، با DoH دوباره تست بگیر</td></tr>
-        <tr><td><b>loss بالای ۵٪</b></td><td>قطع‌ووصلی دارد — برای گیم و تماس بد است</td></tr>
-      </table>
-      <div class="warn">⚠️ <b>نکته ویندوز:</b> اگر همه <span dir="ltr">TIMEOUT</span> شدند، فایروال یا آنتی‌ویروس پورت UDP/53 را بسته — اول با <span dir="ltr">--protocol doh</span> امتحان کن.</div>
+<!-- ================= PRESET ================= -->
+<section id="preset">
+  <div class="sec-head">
+    <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M4 21V10l8-6 8 6v11"/><path d="M9 21v-6h6v6"/></svg></span>
+    <h2>بخش پنجم: پریست ایران، هایجک و مقایسه مطمئن<small>قلب تپنده ابزار برای کاربر ایرانی</small></h2>
+  </div>
+  <div class="card">
+    <h3>تست داخلی در برابر خارجی</h3>
+    <p>پریست ایران ریزالورهای شکان، الکترو و 403 را کنار عمومی‌ها می‌گذارد و دامنه‌ها را به داخلی/خارجی تقسیم می‌کند:</p>
+    <div class="code"><header><span>bash</span><button class="copy">کپی</button></header><pre>python main.py --preset ir --domain-group internal --queries 20 --seed 42
+python main.py --preset ir --domain-group external --queries 20 --seed 42</pre></div>
+    <div class="note info"><b>آی‌پی‌های 10.202.10.x</b>مخصوص 403 فقط از داخل ایران جواب می‌دهند؛ بیرون ایران TIMEOUT می‌گیری که طبیعی است.</div>
+  </div>
+  <div class="card">
+    <h3>ستون hijack یعنی چه؟</h3>
+    <p>ابزار برای هر سرور یک پروب به دامنه <span dir="ltr">.invalid</span> می‌فرستد که طبق استاندارد هیچ‌وقت وجود ندارد؛ جواب سالم حتماً باید NXDOMAIN باشد:</p>
+    <div class="grid">
+      <div class="mini"><b>✅ clean</b>مسیر سالم است — به عددها اعتماد کن.</div>
+      <div class="mini"><b>🚨 HIJACKED</b>مسیر UDP دستکاری شده — عددها یعنی «تأخیر پروکسی»؛ با <span dir="ltr">--protocol doh</span> راستی‌آزمایی کن.</div>
     </div>
   </div>
-
-  <div class="cta">
-    <a class="btn star" href="https://github.com/Alvandcode/dns-benchmark-pro" target="_blank" rel="noopener">⭐ ستاره به پروژه</a>
-    <a class="btn tg" href="https://t.me/a_c_official" target="_blank" rel="noopener">📢 کانال تلگرام</a>
-    <a class="btn gh" href="https://github.com/Alvandcode/dns-benchmark-pro" target="_blank" rel="noopener">💻 صفحه گیت‌هاب</a>
+  <div class="card">
+    <h3>مقایسه مطمئن با فاصله اطمینان</h3>
+    <p>یک ران نویز دارد. سه بار تکرار کن و به ± نگاه کن (<span dir="ltr">±0.11</span> پایدار، <span dir="ltr">±10</span> ناپایدار):</p>
+    <div class="code"><header><span>bash</span><button class="copy">کپی</button></header><pre>python main.py --preset ir --queries 20 --runs 3 --run-delay 2 --seed 42</pre><pre class="out">1.  1.1.1.1  score=99.75±0.11   grade=A+
+2.  8.8.8.8  score=94.47±10.44  grade=A</pre></div>
   </div>
+</section>
 
-  <footer>ساخته‌شده با ❤️ برای همه کسانی که DNSشان را شانسی انتخاب نمی‌کنند<br/><a href="https://github.com/Alvandcode/dns-benchmark-pro">DNS Benchmark Pro</a> • MIT License</footer>
+<!-- ================= MONITOR ================= -->
+<section id="monitor">
+  <div class="sec-head">
+    <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg></span>
+    <h2>بخش ششم: مانیتورینگ دائمی<small>بهترین DNS امروز، شاید بهترین فردا نباشد</small></h2>
+  </div>
+  <div class="card">
+    <ol class="steps">
+      <li><b>اجرای دوره‌ای</b> (هر ۵ دقیقه، تا Ctrl+C؛ تاریخچه در <span dir="ltr">results/history.db</span> می‌ماند):
+        <div class="code"><header><span>bash</span><button class="copy">کپی</button></header><pre>python main.py --preset ir --queries 10 --watch 300 --seed 42</pre></div>
+      </li>
+      <li><b>تعداد مشخص</b> (عالی برای cron و Task Scheduler):
+        <div class="code"><header><span>bash</span><button class="copy">کپی</button></header><pre>python main.py --dns 1.1.1.1 8.8.8.8 --watch 60 --watch-count 6</pre></div>
+      </li>
+      <li><b>دیدن تاریخچه و روند:</b>
+        <div class="code"><header><span>bash</span><button class="copy">کپی</button></header><pre>python main.py --history 10
+python main.py --trend
+python main.py --trend 1.1.1.1</pre></div>
+        دستور آخر نمودار <span dir="ltr">results/trend.png</span> را هم می‌سازد.
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section id="faq">
+  <div class="sec-head">
+    <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><circle cx="12" cy="16" r=".9"/></svg></span>
+    <h2>بخش هفتم: عیب‌یابی سریع<small>۹۰٪ خطاها یکی از این‌هاست</small></h2>
+  </div>
+  <div class="card"><div class="tbl-wrap"><table>
+    <tr><th>نشانه</th><th>علت</th><th>راه‌حل</th></tr>
+    <tr><td>همه TIMEOUT شدند</td><td>فایروال/آنتی‌ویروس یا فیلترینگ UDP/53</td><td>با <span dir="ltr">--protocol doh</span> امتحان کن</td></tr>
+    <tr><td>ستون hijack قرمز است</td><td>پروکسی شفاف روی مسیر UDP</td><td>عدد UDP را قبول نکن؛ مبنا را DoH بگذار</td></tr>
+    <tr><td>عدد خیلی خوب ولی مشکوک (مثلاً 0.6ms)</td><td>کش محلی یا پروکسی شفاف</td><td>با DoH و <span dir="ltr">--runs 3</span> راستی‌آزمایی کن</td></tr>
+    <tr><td>pip شناخته نشد</td><td>PATH یا نصب ناقص پایتون</td><td>لینوکس/مک: <span dir="ltr">pip3</span> — ویندوز: <span dir="ltr">py -m pip</span></td></tr>
+    <tr><td>matplotlib نصب نشد</td><td>حجم بالا یا مشکل بیلد روی گوشی</td><td>ردش کن؛ ابزار بدون نمودار کامل کار می‌کند</td></tr>
+    <tr><td>کد خروج 2</td><td>همه سرورها ۱۰۰٪ loss</td><td>اتصال اینترنت و VPN را چک کن</td></tr>
+  </table></div></div>
+  <div class="card">
+    <h3>یادآوری حریم خصوصی</h3>
+    <p>کوئری‌ها به سرور ثالث ارسال می‌شود؛ دامنه حساس بنچمارک نکن. برای نتیجه قابل تکرار همیشه <span dir="ltr">--seed</span> بده.</p>
+  </div>
+</section>
+
+<footer>
+  ساخته‌شده برای پروژه DNS Benchmark Pro — نسخه 1.4.0
+  <div class="links">
+    <a href="https://github.com/Alvandcode/dns-benchmark-pro" target="_blank" rel="noopener">⭐ گیت‌هاب پروژه</a>
+    <a href="https://t.me/a_c_official" target="_blank" rel="noopener">📢 کانال تلگرام</a>
+  </div>
+  <br><a class="top" href="#top">بازگشت به بالا</a>
+</footer>
+
 </div>
 
-<button id="top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="بازگشت به بالا">↑</button>
-
 <script>
-function show(id, btn){
-  document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
-  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
-  document.getElementById(id).classList.add('active');
-  btn.classList.add('active');
-  if(history.replaceState){ history.replaceState(null,'','#'+id); }
-}
-function copy(btn){
-  var txt = btn.parentElement.querySelector('pre').innerText;
-  function done(){ btn.textContent='✓ کپی شد'; btn.classList.add('ok'); setTimeout(function(){ btn.textContent='کپی'; btn.classList.remove('ok'); },1600); }
-  if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(done, done); }
-  else { var ta=document.createElement('textarea'); ta.value=txt; document.body.appendChild(ta); ta.select(); try{document.execCommand('copy');}catch(e){} document.body.removeChild(ta); done(); }
-}
 (function(){
-  var h = location.hash.replace('#','');
-  if(h==='desktop'){ var tabs=document.querySelectorAll('.tab'); if(tabs[1]) show('desktop',tabs[1]); }
-  var top=document.getElementById('top');
-  window.addEventListener('scroll',function(){ top.style.display = window.scrollY>400 ? 'block':'none'; });
+  // Copy buttons
+  document.querySelectorAll('.code').forEach(function(box){
+    var btn = box.querySelector('.copy'), pre = box.querySelector('pre');
+    if(!btn || !pre) return;
+    btn.addEventListener('click', function(){
+      var txt = pre.innerText;
+      function done(){ btn.textContent = 'کپی شد ✓'; setTimeout(function(){ btn.textContent = 'کپی'; }, 1500); }
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(txt).then(done).catch(function(){ fallback(); });
+      } else { fallback(); }
+      function fallback(){
+        var ta = document.createElement('textarea');
+        ta.value = txt; document.body.appendChild(ta); ta.select();
+        try{ document.execCommand('copy'); }catch(e){}
+        document.body.removeChild(ta); done();
+      }
+    });
+  });
+  // Active nav highlight
+  var links = Array.prototype.slice.call(document.querySelectorAll('#navlinks a'));
+  var map = {};
+  links.forEach(function(a){ map[a.getAttribute('href').slice(1)] = a; });
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){
+        links.forEach(function(a){ a.classList.remove('active'); });
+        var a = map[en.target.id]; if(a) a.classList.add('active');
+      }
+    });
+  }, {rootMargin:'-40% 0px -55% 0px'});
+  ['mobile','windows','linux','macos','preset','monitor','faq'].forEach(function(id){
+    var el = document.getElementById(id); if(el) obs.observe(el);
+  });
 })();
 </script>
 </body>
