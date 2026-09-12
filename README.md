@@ -64,6 +64,34 @@ python main.py --qtype AAAA --domains google.com github.com aparat.com --verbose
 python -m dns_benchmark --protocol udp --queries 5
 ```
 
+## 🇮🇷 پریست ایران و مقایسه پایدار
+
+```bash
+python main.py --list-presets
+python main.py --preset ir --queries 20 --seed 42
+python main.py --preset ir --domain-group internal --queries 20
+python main.py --preset ir --domain-group external --queries 20
+# repeat N times and rank by mean score with 95% confidence interval:
+python main.py --preset ir --queries 20 --runs 3 --run-delay 2 --seed 42
+```
+
+خروجی حالت مقایسه (`score=94.47±10.44` یعنی ناپایدار؛ `±0.11` یعنی پایدار) در `results/compare_runs.json` هم ذخیره می‌شود.
+
+## 🕵️ تشخیص hijack (پروکسی شفاف)
+
+روی پروتکل `udp` به‌صورت پیش‌فرض برای هر سرور یک پروب `.invalid` (طبق RFC 2606 حتماً باید NXDOMAIN بدهد) فرستاده می‌شود:
+
+- `clean` → پاسخی سالم، interception دیده نشد
+- `HIJACKED (...)` → مسیر UDP هایجک شده؛ عددهای UDP یعنی «تأخیر پروکسی» نه سرور واقعی — با `--protocol doh` مقایسه کنید
+- با `--no-hijack-check` می‌توانید ردش کنید
+
+## 📖 راهنمای تفسیر نتیجه
+
+- `loss > 5%` یعنی قطع‌ووصلی؛ برای گیم/تماس بد است حتی اگر میانگین خوب باشد.
+- اختلاف زیاد `p95` با `average` یعنی ناپایداری (جیتر)؛ در جدول مقایسه به `±` دقت کنید.
+- عدد خیلی خوب ولی مشکوک (مثلاً 0.6ms برای سرور خارجی) را با ستون `hijack` و یک ران `doh` راستی‌آزمایی کنید.
+- یک ران کافی نیست: حداقل `--runs 3 --queries 20` و در ساعت‌های مختلف تکرار کنید.
+
 نمایش همه گزینه‌ها:
 
 ```bash
@@ -81,6 +109,7 @@ results/result.csv
 results/result.json
 results/report.html
 results/chart.png
+results/compare_runs.json   # only with --runs N (N>1)
 ```
 
 ---
@@ -140,9 +169,13 @@ dns_benchmark/
 ├── exporter.py
 ├── dashboard.py
 ├── advisor.py
+├── hijack.py
+├── compare.py
+├── presets.py
 ├── qtypes.py
 └── query_generator.py
 tests/
+presets/ir.json
 .github/workflows/ci.yml
 ```
 

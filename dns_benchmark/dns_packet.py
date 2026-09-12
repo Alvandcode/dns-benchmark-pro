@@ -103,3 +103,70 @@ def validate_response(resp, tid, expected_qname_wire=None):
             return False
 
     return True
+
+
+def _skip_name(buf: bytes, off: int) -> int:
+    """Skip a (possibly compressed) domain name. Returns offset after it."""
+    jumped = False
+    start_off = off
+    guard = 0
+    while True:
+        if off >= len(buf) or guard > 64:
+            raise ValueError("truncated name")
+        guard += 1
+        length = buf[off]
+        if length == 0:
+            off += 1
+            break
+        if length & 0xC0 == 0xC0:  # compression pointer
+            if off + 1 >= len(buf):
+                raise ValueError("truncated pointer")
+            off += 2
+            break  # pointer always terminates the name
+        off += 1 + length
+        if not jumped and off > len(buf):
+            raise ValueError("truncated label")
+    return off
+
+
+def parse_response(resp, tid):
+    """Minimal response parser for hijack analysis.
+
+    Returns dict with: ok_tid, qr, opcode, tc, rcode, qdcount, ancount,
+    answers (list of A-record IP strings). Never raises on hostile input.
+    """
+    out = {"ok_tid": False, "qr": 0, "opcode": 0, "tc": 0, "rcode": -1,
+           "qdcount": 0, "ancount": 0, "answers": []}
+    try:
+        if not isinstance(resp, (bytes, bytearray)) or len(resp) < 12:
+            return out
+        buf = bytes(resp)
+        out["ok_tid"] = buf[:2] == bytes(tid)
+        flags = int.from_bytes(buf[2:4], "big")
+        out["qr"] = (flags >> 15) & 1
+        out["opcode"] = (flags >> 11) & 0xF
+        out["tc"] = (flags >> 9) & 1
+        out["rcode"] = flags & 0xF
+        out["qdcount"] = int.from_bytes(buf[4:6], "big")
+        out["ancount"] = int.from_bytes(buf[6:8], "big")
+        if out["qr"] != 1 or not out["ok_tid"]:
+            return out
+        off = 12
+        for _ in range(min(out["qdcount"], 8)):
+            off = _skip_name(buf, off)
+            off += 4  # QTYPE + QCLASS
+        for _ in range(min(out["ancount"], 32)):
+            off = _skip_name(buf, off)
+            if off + 10 > len(buf):
+                break
+            rtype = int.from_bytes(buf[off:off + 2], "big")
+            rclass = int.from_bytes(buf[off + 2:off + 4], "big")
+            rdlen = int.from_bytes(buf[off + 8:off + 10], "big")
+            off += 10
+            rdata = buf[off:off + rdlen]
+            off += rdlen
+            if rtype == 1 and rclass == 1 and rdlen == 4 and len(rdata) == 4:
+                out["answers"].append(".".join(str(b) for b in rdata))
+        return out
+    except Exception:
+        return out

@@ -69,6 +69,7 @@ def generate_html_report(results, path="results/report.html"):
             f"<td>{html.escape(str(round(float(r.get('median', 0) or 0), 2)))}</td>"
             f"<td>{html.escape(str(round(float(r.get('p95', 0) or 0), 2)))}</td>"
             f"<td>{html.escape(str(round(float(r.get('packet_loss', 0) or 0), 2)))}</td>"
+            f"<td>{html.escape(str(r.get('hijack', '')))}</td>"
             f"<td>{err_txt}</td>"
             "</tr>"
         )
@@ -90,7 +91,7 @@ th{{background:#f0f0f0}}
 <h1>DNS Benchmark Report</h1>
 <p>Lower average/p95 is better. Score 0-100, grade A+..F. Only NOERROR counts as success.</p>
 <table>
-<tr><th>Server</th><th>Proto</th><th>Score</th><th>Grade</th><th>Avg ms</th><th>Median ms</th><th>P95 ms</th><th>Loss %</th><th>Errors</th></tr>
+<tr><th>Server</th><th>Proto</th><th>Score</th><th>Grade</th><th>Avg ms</th><th>Median ms</th><th>P95 ms</th><th>Loss %</th><th>Hijack</th><th>Errors</th></tr>
 {''.join(rows)}
 </table>
 <h2>Latency chart (avg vs p95)</h2>

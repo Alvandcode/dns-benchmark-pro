@@ -1,0 +1,39 @@
+{
+  "name": "ir",
+  "description": "Iran preset: popular Iranian resolvers + public ones, split into internal/external query domains.",
+  "dns": [
+    "178.22.122.100",
+    "185.51.200.2",
+    "78.157.42.100",
+    "78.157.42.101",
+    "10.202.10.202",
+    "10.202.10.102",
+    "1.1.1.1",
+    "8.8.8.8",
+    "9.9.9.9"
+  ],
+  "dns_labels": {
+    "178.22.122.100": "Shecan-1",
+    "185.51.200.2": "Shecan-2",
+    "78.157.42.100": "Electro-1",
+    "78.157.42.101": "Electro-2",
+    "10.202.10.202": "403.online-1",
+    "10.202.10.102": "403.online-2",
+    "1.1.1.1": "Cloudflare",
+    "8.8.8.8": "Google",
+    "9.9.9.9": "Quad9"
+  },
+  "note_403": "10.202.10.x (403.online) is only routable from Iranian IPs; expect TIMEOUT outside Iran.",
+  "internal_domains": [
+    "aparat.com",
+    "digikala.com",
+    "divar.ir",
+    "shaparak.ir"
+  ],
+  "external_domains": [
+    "google.com",
+    "cloudflare.com",
+    "wikipedia.org",
+    "github.com"
+  ]
+}
