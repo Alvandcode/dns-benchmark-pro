@@ -60,6 +60,8 @@ python main.py
 python main.py --queries 20 --timeout 3 --protocol udp
 python main.py --dns 1.1.1.1 8.8.8.8 178.22.122.100 --queries 30 --protocol doh
 python main.py --protocol dot --output-dir results --seed 42 --concurrency 20
+python main.py --qtype AAAA --domains google.com github.com aparat.com --verbose
+python -m dns_benchmark --protocol udp --queries 5
 ```
 
 نمایش همه گزینه‌ها:
@@ -138,8 +140,10 @@ dns_benchmark/
 ├── exporter.py
 ├── dashboard.py
 ├── advisor.py
+├── qtypes.py
 └── query_generator.py
 tests/
+.github/workflows/ci.yml
 ```
 
 اجرای تست‌ها:

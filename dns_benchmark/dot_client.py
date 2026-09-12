@@ -9,13 +9,18 @@ import struct
 import time
 
 from dns_benchmark.dns_packet import _encode_name, build_query, validate_response
+from dns_benchmark.qtypes import normalize_qtype
 
 
 def dot_query(dns_ip, domain, timeout=5.0, qtype=1):
     """Query via DoT. Returns (success, latency_ms|None, error|None)."""
     try:
+        qtype_num = normalize_qtype(qtype)
+    except ValueError as exc:
+        return False, None, f"BAD_QUERY: {exc}"
+    try:
         qname_wire = _encode_name(domain)
-        tid, packet = build_query(domain, qtype)
+        tid, packet = build_query(domain, qtype_num)
     except ValueError as exc:
         return False, None, f"BAD_QUERY: {exc}"
 
@@ -32,8 +37,6 @@ def dot_query(dns_ip, domain, timeout=5.0, qtype=1):
         return False, None, f"BAD_TIMEOUT: {exc}"
 
     ctx = ssl.create_default_context()
-    # Hostname check can't work for raw IPs on all platforms; SNI with IP
-    # is attempted, cert validation stays on for real hostnames.
     start = time.perf_counter()
     try:
         with socket.create_connection((clean_ip, 853), timeout=timeout) as raw:
@@ -49,8 +52,8 @@ def dot_query(dns_ip, domain, timeout=5.0, qtype=1):
                 response = _recvall(sock, resp_len)
     except socket.timeout:
         return False, None, "TIMEOUT"
-    except ssl.SSLCertVerificationError as exc:
-        return False, None, f"TLS_CERT: {exc}"
+    except ssl.SSLCertVerificationError:
+        return False, None, "TLS_CERT"
     except OSError as exc:
         return False, None, f"NETWORK: {getattr(exc, 'strerror', None) or exc}"
     except Exception as exc:

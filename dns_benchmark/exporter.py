@@ -13,14 +13,27 @@ def _ensure_parent(file: Path) -> Path:
     return file
 
 
+def _flatten_row(row: dict) -> dict:
+    """Make rows CSV-safe: serialize nested errors dict compactly."""
+    flat = dict(row)
+    errors = flat.get("errors")
+    if isinstance(errors, dict):
+        if not errors:
+            flat["errors"] = ""
+        else:
+            flat["errors"] = ";".join(f"{k}x{v}" for k, v in sorted(errors.items()))
+    return flat
+
+
 def export_csv(data, path="results/result.csv"):
     if not data:
         raise ValueError("no data to export (empty result list)")
     file = _ensure_parent(Path(path))
+    rows = [_flatten_row(r) for r in data]
     with open(file, "w", newline="", encoding="utf-8-sig") as f:
-        w = csv.DictWriter(f, fieldnames=list(data[0].keys()))
+        w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
         w.writeheader()
-        for row in data:
+        for row in rows:
             w.writerow(row)
     return file
 

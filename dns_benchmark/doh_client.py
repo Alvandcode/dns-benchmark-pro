@@ -1,12 +1,14 @@
 """DNS-over-HTTPS client (RFC 8484 JSON profile).
 
-Uses the ``requests`` dependency (previously dead) so the README claim
-of DoH support is actually true.
+Uses the ``requests`` dependency so the README claim of DoH support
+is actually true.
 """
 
 from __future__ import annotations
 
 import time
+
+from dns_benchmark.qtypes import qtype_to_doh
 
 try:
     import requests
@@ -41,6 +43,10 @@ def doh_query(server, domain, timeout=5.0, qtype="A"):
     if not domain or not isinstance(domain, str):
         return False, None, "BAD_QUERY: empty domain"
     try:
+        qtype_str = qtype_to_doh(qtype)
+    except ValueError as exc:
+        return False, None, f"BAD_QUERY: {exc}"
+    try:
         timeout = float(timeout)
         if not 0.5 <= timeout <= 30:
             raise ValueError("timeout must be between 0.5 and 30 seconds")
@@ -50,11 +56,9 @@ def doh_query(server, domain, timeout=5.0, qtype="A"):
     url = resolve_doh_endpoint(server)
     start = time.perf_counter()
     try:
-        # Cloudflare supports RFC8484 GET; Google/Quad9 support JSON API.
-        # Use JSON API which works across all three without wire-format code.
         resp = requests.get(
             url,
-            params={"name": domain, "type": qtype},
+            params={"name": domain, "type": qtype_str},
             headers={"Accept": "application/dns-json"},
             timeout=timeout,
         )

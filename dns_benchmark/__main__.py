@@ -1,3 +1,5 @@
+"""Allow `python -m dns_benchmark`."""
+
 import sys
 
 from dns_benchmark.cli import main

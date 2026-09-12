@@ -1,17 +1,19 @@
-"""UDP DNS client (port 53)."""
+"""UDP DNS client (port 53) with TCP fallback on truncation."""
 
 from __future__ import annotations
 
 import ipaddress
 import socket
+import struct
 import time
 
 from dns_benchmark.dns_packet import _encode_name, build_query, validate_response
+from dns_benchmark.qtypes import normalize_qtype
 
 
 def _family_for_ip(dns_ip: str):
     try:
-        addr = ipaddress.ip_address(dns_ip.strip())
+        addr = ipaddress.ip_address((dns_ip or "").strip())
     except Exception as exc:
         raise ValueError(f"invalid DNS server IP: {dns_ip!r}") from exc
     if isinstance(addr, ipaddress.IPv4Address):
@@ -19,11 +21,65 @@ def _family_for_ip(dns_ip: str):
     return socket.AF_INET6, str(addr)
 
 
+def _is_truncated(resp: bytes) -> bool:
+    if len(resp) < 4:
+        return False
+    flags = int.from_bytes(resp[2:4], "big")
+    return bool((flags >> 9) & 1)
+
+
+def _query_tcp(family, clean_ip, packet, tid, qname_wire, timeout) -> tuple:
+    """DNS-over-TCP fallback (length-prefixed). Returns (ok, latency|None, err)."""
+    start = time.perf_counter()
+    try:
+        with socket.socket(family, socket.SOCK_STREAM) as sock:
+            sock.settimeout(timeout)
+            sock.connect((clean_ip, 53))
+            sock.sendall(struct.pack("!H", len(packet)) + packet)
+            hdr = _recvall(sock, 2)
+            if len(hdr) != 2:
+                return False, None, "TRUNCATED"
+            (resp_len,) = struct.unpack("!H", hdr)
+            if not 12 <= resp_len <= 65535:
+                return False, None, "INVALID_LENGTH"
+            response = _recvall(sock, resp_len)
+    except socket.timeout:
+        return False, None, "TIMEOUT"
+    except OSError as exc:
+        return False, None, f"NETWORK: {exc.strerror or exc}"
+    except Exception as exc:
+        return False, None, f"ERROR: {type(exc).__name__}"
+
+    latency = (time.perf_counter() - start) * 1000.0
+    if len(response) != resp_len or not validate_response(
+        response, tid, expected_qname_wire=qname_wire
+    ):
+        return False, latency, "INVALID"
+    return True, latency, None
+
+
+def _recvall(sock, n: int) -> bytes:
+    buf = b""
+    while len(buf) < n:
+        chunk = sock.recv(n - len(buf))
+        if not chunk:
+            break
+        buf += chunk
+    return buf
+
+
 def dns_query(dns_ip, domain, timeout=3.0, qtype=1):
-    """Send one UDP DNS query. Returns (success, latency_ms|None, error|None)."""
+    """Send one DNS query over UDP (TCP fallback on TC=1).
+
+    Returns (success, latency_ms|None, error|None).
+    """
+    try:
+        qtype_num = normalize_qtype(qtype)
+    except ValueError as exc:
+        return False, None, f"BAD_QUERY: {exc}"
     try:
         qname_wire = _encode_name(domain)
-        tid, packet = build_query(domain, qtype)
+        tid, packet = build_query(domain, qtype_num)
     except ValueError as exc:
         return False, None, f"BAD_QUERY: {exc}"
 
@@ -53,6 +109,17 @@ def dns_query(dns_ip, domain, timeout=3.0, qtype=1):
         return False, None, f"ERROR: {type(exc).__name__}"
 
     latency = (time.perf_counter() - start) * 1000.0
+
+    # Truncated UDP -> retry over TCP (covers large/DNSSEC answers).
+    if _is_truncated(response):
+        ok, tcp_latency, err = _query_tcp(
+            family, clean_ip, packet, tid, qname_wire, timeout
+        )
+        if ok:
+            return True, tcp_latency, None
+        return False, tcp_latency if tcp_latency is not None else latency, (
+            err or "TRUNCATED"
+        )
 
     if not validate_response(response, tid, expected_qname_wire=qname_wire):
         return False, latency, "INVALID"
