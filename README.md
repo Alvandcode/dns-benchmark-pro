@@ -42,6 +42,7 @@
 
 - [🎓 Tutorial | آموزش تصویری](#-tutorial--آموزش-تصویری)
 - [✨ Features | قابلیت‌ها](#-features--قابلیتها)
+- [✅ Prerequisites | پیش‌نیازها](#-prerequisites--پیشنیازها)
 - [⚡ Quick Start | شروع سریع](#-quick-start--شروع-سریع)
 - [🇮🇷 Iran Preset | پریست ایران](#-iran-preset--پریست-ایران)
 - [🕵️ Hijack Detection | تشخیص هایجک](#️-hijack-detection--تشخیص-هایجک)
@@ -69,6 +70,30 @@
 | 📡 | **Monitoring mode**: SQLite history + score trend chart | **مانیتورینگ**: تاریخچه SQLite + نمودار روند امتیاز |
 | 📄 | **Reports**: CSV (Excel-friendly), JSON, HTML + charts | **گزارش**: CSV، JSON، HTML همراه نمودار |
 | 🛡️ | **Safe by design**: NXDOMAIN never counts as success, input validation, no secret leaks | **امنیت در طراحی**: NXDOMAIN موفق حساب نمی‌شود، اعتبارسنجی ورودی |
+
+---
+
+## ✅ Prerequisites | پیش‌نیازها
+
+**EN:** You need **Python ≥3.9** (per `requires-python` in `pyproject.toml`), **pip** (ships with Python) and **git** to clone the repo:
+
+```bash
+python --version   # must be 3.9+
+pip --version
+git --version
+```
+
+<div dir="rtl" lang="fa">
+
+**FA:** به **پایتون ۳.۹ یا جدیدتر** (طبق `pyproject.toml`)، ابزار **pip** (همراه پایتون نصب می‌شود) و **git** برای کلون کردن ریپو نیاز داری:
+
+```bash
+python --version   # باید 3.9 به بالا باشد
+pip --version
+git --version
+```
+
+</div>
 
 ---
 
@@ -197,6 +222,14 @@ results/report.html
 ```
 
 Reports land in `results/` (overwritten each run, git-ignored): `result.csv` (Excel-friendly `utf-8-sig`), `result.json`, `report.html` (full table + avg-vs-P95 chart), `chart.png`, `compare_runs.json` (multi-run mode; in `--watch` mode per-tick history goes to SQLite instead), `history.db` + `trend.png` (monitoring mode).
+
+**EN:** To see the HTML report, open the freshly generated `results/report.html` in your browser after a run — there is no committed sample report/chart file in the repo yet, so the text sample above is the reference for now; screenshots coming soon.
+
+<div dir="rtl" lang="fa">
+
+**FA:** برای دیدن گزارش HTML، بعد از هر اجرا فایل تازه‌ساخته‌شده `results/report.html` را در مرورگر باز کن — هنوز فایل نمونه کامیت‌شده‌ای در ریپو نیست، پس فعلاً همین نمونه متنی بالا مبناست؛ اسکرین‌شات به‌زودی اضافه می‌شود.
+
+</div>
 
 ---
 
